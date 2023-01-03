@@ -25,11 +25,11 @@ parser_t *init_parser(lexer_t *lexer) {
 
   while (true) {
     t = lexer_collect_next(lexer);
-    if (t == NULL)
-      break;
     size++;
     p->tokens = realloc(p->tokens, size * sizeof(token_t *));
     p->tokens[size - 1] = t;
+    if (t == NULL)
+      break;
   }
 
   p->size = size;
@@ -205,5 +205,19 @@ ast_t *parse_expr(parser_t *parser) {
   return NULL;
 }
 
-ast_t *parse_all(parser_t *parser) {}
+ast_t *parse_all(parser_t *parser) {
+  token_t *t = parser->tokens[parser->i];
+  ast_t **asts = malloc(sizeof(ast_t *));
+  ast_t *cur;
+  int i = 0;
+  while (t != NULL) {
+    cur = parse_expr(parser);
+    i++;
+    asts = realloc(asts, i * sizeof(ast_t *));
+    asts[i - 1] = cur;
+    t = parser->tokens[parser->i];
+  }
+  return init_ast_root(asts, i);
+}
+
 void parser_error(parser_t *parser) { exit(1); }
