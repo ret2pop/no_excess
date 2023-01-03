@@ -64,6 +64,14 @@ ast_t *eval_expr(visitor_t *v, ast_t *e) {
   }
 }
 
-ast_t *eval(visitor_t *v) {}
+ast_t *eval(visitor_t *v) {
+  ast_t *cur;
+  ast_t *root;
+  ast_t **eval_nodes;
+  int j = 0;
+  for (int i = 0; i < v->root->root_size; i++) {
+    cur = eval_expr(v, v->root->subnodes[i]);
+  }
+}
 
 void eval_error(visitor_t *v, ast_t *e) { exit(1); }

@@ -212,6 +212,8 @@ ast_t *parse_all(parser_t *parser) {
   int i = 0;
   while (t != NULL) {
     cur = parse_expr(parser);
+    if (cur == NULL)
+      continue;
     i++;
     asts = realloc(asts, i * sizeof(ast_t *));
     asts[i - 1] = cur;
