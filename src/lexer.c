@@ -63,11 +63,13 @@ static char *char_to_string(char c) {
 
 token_t *lexer_collect_bool(lexer_t *lexer) {
   lexer_move(lexer);
-  if (lexer->c == 't')
+  if (lexer->c == 't') {
+    lexer_move(lexer);
     return init_token(TOKEN_BOOL, "T", lexer->row, lexer->col);
-  else if (lexer->c == 'f')
+  } else if (lexer->c == 'f') {
+    lexer_move(lexer);
     return init_token(TOKEN_BOOL, "F", lexer->row, lexer->col);
-  else
+  } else
     return NULL;
 }
 

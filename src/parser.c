@@ -85,20 +85,36 @@ ast_t *parse_symbol(parser_t *parser) {
 }
 
 ast_t *parse_function_args(parser_t *parser) {
-  token_t *t = parser->tokens[parser->i];
-
-  ast_t *head;
   ast_t *car;
-  ast_t *cdr;
-  while (t->type != TOKEN_LPAREN) {
+  ast_t *head = init_ast_pair(NULL, NULL);
+  ast_t *cur = head;
+  parser_move(parser);
+
+  token_t *current_token = parser->tokens[parser->i];
+  while (current_token->type != TOKEN_RPAREN) {
+    if (parser->tokens[parser->i]->type != TOKEN_ID)
+      parser_error(parser);
+
+    car = parse_symbol(parser);
+
+    cur->car = car;
+    cur->cdr = init_ast_pair(NULL, NULL);
+    cur = cur->cdr;
+
+    parser_move(parser);
+    current_token = parser->tokens[parser->i];
   }
+
+  parser_move(parser);
+  return head;
 }
+
 ast_t *parse_function(parser_t *parser) {
   parser_move(parser);
   parser_eat(parser, TOKEN_LPAREN);
   /* TODO: actually write a helper function that also keeps track
   of the amount of arguments and checks that they are all identifiers.*/
-  ast_t *car = parse_list(parser);
+  ast_t *car = parse_function_args(parser);
   ast_t *cdr =
       parse_expr(parser); /* a function can contain a single expression */
   parser_eat(parser, TOKEN_RPAREN);
@@ -119,37 +135,45 @@ void parse_bind(parser_t *parser) {
 }
 
 ast_t *parse_list(parser_t *parser) {
-  parser_move(parser);
-  token_t *cur = parser->tokens[parser->i];
-  bool first_entry = true;
-  ast_t *head;
   ast_t *car;
-  ast_t *cdr =
-      init_ast_pair(init_ast_pair(NULL, NULL), init_ast_pair(NULL, NULL));
-  while (cur->type != TOKEN_RPAREN) {
-    if (cur->type == TOKEN_ID) {
-      if (strcmp(cur->value, "lambda") == 0 && first_entry)
-        return parse_function(parser);
-      else if (strcmp(cur->value, "bind") == 0 && first_entry) {
+  ast_t *head = init_ast_pair(NULL, NULL);
+  ast_t *cur = head;
+  parser_move(parser);
+
+  bool first_entry = true;
+  token_t *current_token = parser->tokens[parser->i];
+  while (current_token->type != TOKEN_RPAREN) {
+    if (parser->tokens[parser->i]->type == TOKEN_ID) {
+      if (strcmp(parser->tokens[parser->i]->value, "lambda") == 0 &&
+          first_entry) {
+        car = parse_function(parser);
+        first_entry = false;
+      } else if (strcmp(parser->tokens[parser->i]->value, "bind") == 0 &&
+                 first_entry) {
         parse_bind(parser);
         return NULL;
+      } else {
+        car = parse_symbol(parser);
       }
-    } else
+    } else {
       car = parse_expr(parser);
-
-    if (car == NULL)
-      parser_error(parser);
+      if (car == NULL)
+        parser_error(parser);
+    }
+    cur->car = car;
+    cur->cdr = init_ast_pair(NULL, NULL);
+    cur = cur->cdr;
     first_entry = false;
-
-    head = init_ast_pair(car, cdr);
     parser_move(parser);
-    cur = parser->tokens[parser->i];
+    current_token = parser->tokens[parser->i];
   }
+  parser_move(parser);
+  return head;
 }
 
 ast_t *parse_quote(parser_t *parser) {
   parser_move(parser);
-  ast_t *car = init_ast_string("quote");
+  ast_t *car = init_ast_symbol("quote");
   ast_t *expr = parse_expr(parser);
   ast_t *ret = init_ast_pair(
       car, init_ast_pair(

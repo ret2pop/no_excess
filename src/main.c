@@ -42,7 +42,7 @@ int main(int argc, char **argv) {
   /* } */
 
   /* TEST PARSER, VISITOR, PRINTER */
-  lexer_t *lexer = init_lexer("\"hello world\"");
+  lexer_t *lexer = init_lexer("34.4");
   parser_t *parser = init_parser(lexer);
 
   ast_t *root = parse_expr(parser);
