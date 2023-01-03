@@ -14,9 +14,8 @@ parser_t *init_parser(lexer_t *lexer) {
 
   p->i = 0;
   p->tokens = malloc(sizeof(token_t *));
-  p->symbol_table = init_hash_table();
+  p->symbol_table = init_hash_table(10000);
   p->finished = false;
-
   if (p->tokens == NULL)
     die("malloc on p->tokens");
 
@@ -44,7 +43,11 @@ void parser_move(parser_t *parser) {
     parser->finished = true;
 }
 
-void parser_eat(parser_t *parser, token_t *token) { parser_move(parser); }
+void parser_eat(parser_t *parser, int type) {
+  parser_move(parser);
+  if (parser->tokens[parser->i]->type != type)
+    parser_error(parser);
+}
 
 ast_t *parse_bool(parser_t *parser) {
   token_t *t = parser->tokens[parser->i];
@@ -75,31 +78,85 @@ ast_t *parse_float(parser_t *parser) {
   return init_ast_float(ret);
 }
 
+ast_t *parse_symbol(parser_t *parser) {
+  char *str = parser->tokens[parser->i]->value;
+  parser_move(parser);
+  return init_ast_symbol(str);
+}
+
+ast_t *parse_function_args(parser_t *parser) {
+  token_t *t = parser->tokens[parser->i];
+
+  ast_t *head;
+  ast_t *car;
+  ast_t *cdr;
+  while (t->type != TOKEN_LPAREN) {
+  }
+}
 ast_t *parse_function(parser_t *parser) {
   parser_move(parser);
-  parser_eat(parser, init_token(TOKEN_LPAREN, "(", 0, 0));
-  ast_t *car = parse_list(parser); /* gets list of symbols; does not check that
-                                      they are symbols :skull: */
+  parser_eat(parser, TOKEN_LPAREN);
+  /* TODO: actually write a helper function that also keeps track
+  of the amount of arguments and checks that they are all identifiers.*/
+  ast_t *car = parse_list(parser);
   ast_t *cdr =
       parse_expr(parser); /* a function can contain a single expression */
+  parser_eat(parser, TOKEN_RPAREN);
   return init_ast_function(car, cdr);
+}
+
+void parse_bind(parser_t *parser) {
+  parser_move(parser);
+  parser_eat(parser, TOKEN_ID);
+
+  token_t *t = parser->tokens[parser->i];
+  char *name = t->value;
+  parser_move(parser);
+  ast_t *expr = parse_expr(parser); /* unevaluated expr will be evaluated when
+                                       hash table transfers to visitor JIT */
+
+  hash_table_add(parser->symbol_table, name, expr);
 }
 
 ast_t *parse_list(parser_t *parser) {
   parser_move(parser);
   token_t *cur = parser->tokens[parser->i];
   bool first_entry = true;
+  ast_t *head;
+  ast_t *car;
+  ast_t *cdr =
+      init_ast_pair(init_ast_pair(NULL, NULL), init_ast_pair(NULL, NULL));
   while (cur->type != TOKEN_RPAREN) {
     if (cur->type == TOKEN_ID) {
       if (strcmp(cur->value, "lambda") == 0 && first_entry)
         return parse_function(parser);
-      else if (strcmp(cur->value, "bind") == 0 && first_entry)
-        return parse_bind(parser);
-    } else if (cur->type == TOKEN_LPAREN)
-      parse_list(parser);
+      else if (strcmp(cur->value, "bind") == 0 && first_entry) {
+        parse_bind(parser);
+        return NULL;
+      }
+    } else
+      car = parse_expr(parser);
+
+    if (car == NULL)
+      parser_error(parser);
     first_entry = false;
+
+    head = init_ast_pair(car, cdr);
+    parser_move(parser);
+    cur = parser->tokens[parser->i];
   }
 }
+
+ast_t *parse_quote(parser_t *parser) {
+  parser_move(parser);
+  ast_t *car = init_ast_string("quote");
+  ast_t *expr = parse_expr(parser);
+  ast_t *ret = init_ast_pair(
+      car, init_ast_pair(
+               expr, init_ast_pair(NULL, NULL))); /* Converts ' to `quote` */
+  return ret;
+}
+
 ast_t *parse_expr(parser_t *parser) {
   token_t *t = parser->tokens[parser->i];
   if (t->type == TOKEN_STRING)
@@ -123,3 +180,5 @@ ast_t *parse_expr(parser_t *parser) {
   }
   return NULL;
 }
+
+void parser_error(parser_t *parser) { exit(1); }

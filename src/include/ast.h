@@ -17,14 +17,18 @@ typedef struct AST_STRUCT {
 
   /* For functions, the car will be a list of variables, and the cdr will be the
    * expression */
+  int argument_number; /* number of arguments that function accepts. Used for
+                          speeding up stuff. */
   struct AST_STRUCT *car;
   struct AST_STRUCT *cdr;
 
-  char *string_value;
+  char *string_value; /* Also is symbol value */
   int int_value;
   double float_value;
   bool bool_value;
 } ast_t;
+
+ast_t *init_ast(int type);
 
 ast_t *init_ast_string(char *value);
 
