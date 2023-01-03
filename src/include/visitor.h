@@ -10,7 +10,7 @@ typedef struct {
   ast_t *root;
 } visitor_t;
 
-void eval_error(visitor_t *v);
+void eval_error(visitor_t *v, ast_t *e);
 
 visitor_t *init_visitor(ast_t *root);
 

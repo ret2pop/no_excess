@@ -1,6 +1,12 @@
 #define _GNU_SOURCE
+#include "./include/ast.h"
+#include "./include/hash_table.h"
 #include "./include/lexer.h"
+#include "./include/parser.h"
+#include "./include/print.h"
+#include "./include/stack.h"
 #include "./include/token.h"
+#include "./include/visitor.h"
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,12 +14,12 @@
 
 int main(int argc, char **argv) {
   /* Test Lexer */
-  lexer_t *lexer = init_lexer("'(fasd \"aaaaaaaa\" 4)");
-  token_t *t = lexer_collect_next(lexer);
-  while (t != NULL) {
-    printf("%d: %s\n", t->type, t->value);
-    t = lexer_collect_next(lexer);
-  }
+  /* lexer_t *lexer = init_lexer("'(fasd \"aaaaaaaa\" 4)"); */
+  /* token_t *t = lexer_collect_next(lexer); */
+  /* while (t != NULL) { */
+  /*   printf("%d: %s\n", t->type, t->value); */
+  /*   t = lexer_collect_next(lexer); */
+  /* } */
   /* printf("Welcome to the NXS REPL.\n"); */
 
   /* char *buf = malloc(2); */
@@ -35,5 +41,16 @@ int main(int argc, char **argv) {
   /*   } */
   /* } */
 
+  /* TEST PARSER, VISITOR, PRINTER */
+  lexer_t *lexer = init_lexer("\"hello world\"");
+  parser_t *parser = init_parser(lexer);
+
+  ast_t *root = parse_expr(parser);
+
+  visitor_t *v = init_visitor(root);
+
+  ast_t *res = eval_expr(v, root);
+
+  print(res);
   return 0;
 }

@@ -12,5 +12,11 @@ void print_float(ast_t *f);
 
 void print_func(ast_t *f);
 
+void print_list(ast_t *f);
+
+void print_symbol(ast_t *s);
+
+void print_pair(ast_t *p);
+
 void print(ast_t *res);
 #endif

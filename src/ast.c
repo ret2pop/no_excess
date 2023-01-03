@@ -57,3 +57,10 @@ ast_t *init_ast_function(ast_t *car, ast_t *cdr) {
   a->cdr = cdr;
   return a;
 }
+
+ast_t *init_ast_root(ast_t **subnodes, int size) {
+  ast_t *a = init_ast(AST_ROOT);
+  a->subnodes = subnodes;
+  a->root_size = size;
+  return a;
+}

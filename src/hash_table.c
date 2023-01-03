@@ -70,7 +70,7 @@ ast_t *sl_list_get(sl_list_t *l, char *key) {
   return NULL;
 }
 
-bool sl_list_exists(sl_list_l, char *key) {
+bool sl_list_exists(sl_list_t *l, char *key) {
   if (sl_list_get(l, key) != NULL)
     return true;
   return false;
@@ -111,15 +111,15 @@ ast_t *hash_table_get(hash_table_t *h, char *key) {
   return sl_list_get(l, key);
 }
 
+bool hash_table_exists(hash_table_t *h, char *key) {
+  sl_list_t *l = h->buckets[hash(key, h->size)];
+  return sl_list_exists(l, key);
+}
+
 void hash_table_free(hash_table_t *h) {
   for (int i = 0; i < h->size; i++)
     sl_list_free(h->buckets[i]);
   free(h);
-}
-
-bool hash_table_exists(hash_table_t *h, char *key) {
-  sl_list_t *l = h->buckets[hash(key, h->size)];
-  return sl_list_exists(l, key);
 }
 
 /* DJB2 HASH FUNCTION */

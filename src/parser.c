@@ -52,9 +52,9 @@ void parser_eat(parser_t *parser, int type) {
 ast_t *parse_bool(parser_t *parser) {
   token_t *t = parser->tokens[parser->i];
   parser_move(parser);
-  if (strcmp("T", t->value) == 0) {
+  if (strcmp("T", t->value) == 0)
     return init_ast_bool(true);
-  } else
+  else
     return init_ast_bool(false);
 }
 
@@ -181,4 +181,5 @@ ast_t *parse_expr(parser_t *parser) {
   return NULL;
 }
 
+ast_t *parse_all(parser_t *parser) {}
 void parser_error(parser_t *parser) { exit(1); }
