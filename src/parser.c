@@ -45,6 +45,8 @@ void parser_move(parser_t *parser) {
 
 void parser_eat(parser_t *parser, int type) {
   parser_move(parser);
+  if (parser->tokens[parser->i] == NULL)
+    printf("weird.\n");
   if (parser->tokens[parser->i]->type != type)
     parser_error(parser);
 }
@@ -92,7 +94,7 @@ ast_t *parse_function_args(parser_t *parser) {
 
   token_t *current_token = parser->tokens[parser->i];
   while (current_token->type != TOKEN_RPAREN) {
-    if (parser->tokens[parser->i]->type != TOKEN_ID)
+    if (current_token->type != TOKEN_ID)
       parser_error(parser);
 
     car = parse_symbol(parser);
@@ -101,7 +103,6 @@ ast_t *parse_function_args(parser_t *parser) {
     cur->cdr = init_ast_pair(NULL, NULL);
     cur = cur->cdr;
 
-    parser_move(parser);
     current_token = parser->tokens[parser->i];
   }
 
@@ -118,7 +119,9 @@ ast_t *parse_function(parser_t *parser) {
       parse_expr(parser); /* a function can contain a single expression */
   if (cdr == NULL)
     parser_error(parser);
-  parser_eat(parser, TOKEN_RPAREN);
+  if (parser->tokens[parser->i]->type != TOKEN_RPAREN)
+    parser_error(parser);
+  parser_move(parser);
   return init_ast_function(car, cdr);
 }
 
@@ -144,13 +147,10 @@ ast_t *parse_list(parser_t *parser) {
   bool first_entry = true;
   token_t *current_token = parser->tokens[parser->i];
   while (current_token->type != TOKEN_RPAREN) {
-    if (parser->tokens[parser->i]->type == TOKEN_ID) {
-      if (strcmp(parser->tokens[parser->i]->value, "lambda") == 0 &&
-          first_entry) {
-        car = parse_function(parser);
-        first_entry = false;
-      } else if (strcmp(parser->tokens[parser->i]->value, "bind") == 0 &&
-                 first_entry) {
+    if (current_token->type == TOKEN_ID) {
+      if (strcmp(current_token->value, "lambda") == 0 && first_entry) {
+        return parse_function(parser);
+      } else if (strcmp(current_token->value, "bind") == 0 && first_entry) {
         parse_bind(parser);
         return NULL;
       } else {
@@ -175,6 +175,8 @@ ast_t *parse_quote(parser_t *parser) {
   parser_move(parser);
   ast_t *car = init_ast_symbol("quote");
   ast_t *expr = parse_expr(parser);
+  if (expr == NULL)
+    parser_error(parser);
   ast_t *ret = init_ast_pair(
       car, init_ast_pair(
                expr, init_ast_pair(NULL, NULL))); /* Converts ' to `quote` */
@@ -199,9 +201,8 @@ ast_t *parse_expr(parser_t *parser) {
     return parse_symbol(parser);
   else if (t->type == TOKEN_LPAREN)
     return parse_list(parser);
-  else {
+  else
     parser_error(parser);
-  }
   return NULL;
 }
 
@@ -212,8 +213,10 @@ ast_t *parse_all(parser_t *parser) {
   int i = 0;
   while (t != NULL) {
     cur = parse_expr(parser);
-    if (cur == NULL)
+    if (cur == NULL) {
+      t = parser->tokens[parser->i];
       continue;
+    }
     i++;
     asts = realloc(asts, i * sizeof(ast_t *));
     asts[i - 1] = cur;
@@ -222,4 +225,7 @@ ast_t *parse_all(parser_t *parser) {
   return init_ast_root(asts, i);
 }
 
-void parser_error(parser_t *parser) { exit(1); }
+void parser_error(parser_t *parser) {
+  printf("PARSER ERROR: something went wrong.\n");
+  exit(1);
+}

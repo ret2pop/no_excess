@@ -13,7 +13,7 @@
 #include <string.h>
 
 int main(int argc, char **argv) {
-  /* TEST LEXER */
+  /* DONE: TEST LEXER */
   /* lexer_t *lexer = init_lexer("'(fasd asdf)"); */
   /* token_t *t = lexer_collect_next(lexer); */
   /* while (t != NULL) { */
@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
   /*   t = lexer_collect_next(lexer); */
   /* } */
 
-  /* TEST REPL POSSIBILITY */
+  /* TODO: TEST REPL POSSIBILITY */
   /* printf("Welcome to the NXS REPL.\n"); */
 
   /* char *buf = malloc(2); */
@@ -43,30 +43,40 @@ int main(int argc, char **argv) {
   /*   } */
   /* } */
 
-  /* TEST PARSER, VISITOR, PRINTER (self evaluating types) */
+  /* DONE: TEST PARSER, VISITOR, PRINTER (self evaluating types) */
   /* lexer_t *lexer = init_lexer("\"hello world\""); */
   /* parser_t *parser = init_parser(lexer); */
   /* visitor_t *visitor = init_visitor(parser); */
   /* ast_t *root = eval(visitor); */
   /* print_root(root); */
 
-  /* TEST PARSING LISTS */
-  lexer_t *lexer = init_lexer("(hello world)");
+  /* DONE: TEST PARSING LISTS */
+  /* lexer_t *lexer = init_lexer("(hello (world #f))"); */
+  /* parser_t *parser = init_parser(lexer); */
+  /* ast_t *root = parse_all(parser); */
+  /* ast_t *list = root->subnodes[0]; */
+  /* ast_t *hello = list->car; */
+  /* ast_t *inner = list->cdr->car; */
+  /* ast_t *world = inner->car; */
+  /* ast_t *fal = inner->cdr->car; */
+  /* printf("%s\n", hello->string_value); */
+  /* printf("%s\n", world->string_value); */
+  /* printf("%d\n", fal->bool_value); */
+
+  /* TODO: TEST PARSING FUNCTIONS */
+  lexer_t *lexer = init_lexer("(lambda (x) (y))");
+  printf("why is code not working, part 1\n");
   parser_t *parser = init_parser(lexer);
+  printf("why is code not working, part 2\n");
   ast_t *root = parse_all(parser);
-  ast_t *list = root->subnodes[0];
-  ast_t *hello = list->car;
-  ast_t *world = list->cdr->car;
-  printf("%s\n", hello->string_value);
-  printf("%s\n", world->string_value);
 
-  /* ast_t *e2 = list->cdr->car; */
-  /* if (e2 == NULL) { */
-  /*   printf("something is wrong here...\n"); */
-  /*   exit(0); */
-  /* } */
-
-  /* printf("%s\n", e2->string_value); */
-  /* printf("number 3\n"); */
+  ast_t *func = root->subnodes[0];
+  printf("%d\n", func->type);
+  /* DONE: TEST PARSING QUOTE */
+  /* lexer_t *lexer = init_lexer("'(hello)"); */
+  /* parser_t *parser = init_parser(lexer); */
+  /* ast_t *root = parse_all(parser); */
+  /* ast_t *quote = root->subnodes[0]; */
+  /* printf("%s\n", quote->cdr->car->car->string_value); */
   return 0;
 }
