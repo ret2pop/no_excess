@@ -41,6 +41,7 @@ bool is_built_in(ast_t *e) {
       strcmp(cmp, "cons") == 0)
     return true;
 
+  /* Comparison functions */
   if (strcmp(cmp, "<") == 0 || strcmp(cmp, ">") == 0 || strcmp(cmp, "=") == 0 ||
       strcmp(cmp, "<=") == 0 || strcmp(cmp, ">=") == 0 ||
       strcmp(cmp, "eq") == 0)

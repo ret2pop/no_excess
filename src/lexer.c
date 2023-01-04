@@ -49,7 +49,7 @@ void lexer_skip_comment(lexer_t *lexer) {
 
 static bool is_valid_id_char(char c) {
   if (c == '(' || c == ')' || isdigit(c) || c == '"' || c == '\'' || c == '#' ||
-      c == '.')
+      c == '.' || isspace(c))
     return false;
   return true;
 }

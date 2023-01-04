@@ -13,13 +13,15 @@
 #include <string.h>
 
 int main(int argc, char **argv) {
-  /* Test Lexer */
-  /* lexer_t *lexer = init_lexer("'(fasd \"aaaaaaaa\" 4)"); */
+  /* TEST LEXER */
+  /* lexer_t *lexer = init_lexer("'(fasd asdf)"); */
   /* token_t *t = lexer_collect_next(lexer); */
   /* while (t != NULL) { */
   /*   printf("%d: %s\n", t->type, t->value); */
   /*   t = lexer_collect_next(lexer); */
   /* } */
+
+  /* TEST REPL POSSIBILITY */
   /* printf("Welcome to the NXS REPL.\n"); */
 
   /* char *buf = malloc(2); */
@@ -40,11 +42,31 @@ int main(int argc, char **argv) {
   /*     printf("lmao\n"); */
   /*   } */
   /* } */
-  /* TEST PARSER, VISITOR, PRINTER */
-  lexer_t *lexer = init_lexer("\"hello world\"");
+
+  /* TEST PARSER, VISITOR, PRINTER (self evaluating types) */
+  /* lexer_t *lexer = init_lexer("\"hello world\""); */
+  /* parser_t *parser = init_parser(lexer); */
+  /* visitor_t *visitor = init_visitor(parser); */
+  /* ast_t *root = eval(visitor); */
+  /* print_root(root); */
+
+  /* TEST PARSING LISTS */
+  lexer_t *lexer = init_lexer("(hello world)");
   parser_t *parser = init_parser(lexer);
-  visitor_t *visitor = init_visitor(parser);
-  ast_t *root = eval(visitor);
-  print_root(root);
+  ast_t *root = parse_all(parser);
+  ast_t *list = root->subnodes[0];
+  ast_t *hello = list->car;
+  ast_t *world = list->cdr->car;
+  printf("%s\n", hello->string_value);
+  printf("%s\n", world->string_value);
+
+  /* ast_t *e2 = list->cdr->car; */
+  /* if (e2 == NULL) { */
+  /*   printf("something is wrong here...\n"); */
+  /*   exit(0); */
+  /* } */
+
+  /* printf("%s\n", e2->string_value); */
+  /* printf("number 3\n"); */
   return 0;
 }

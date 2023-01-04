@@ -110,7 +110,6 @@ ast_t *parse_function_args(parser_t *parser) {
 }
 
 ast_t *parse_function(parser_t *parser) {
-  parser_move(parser);
   parser_eat(parser, TOKEN_LPAREN);
   /* TODO: actually write a helper function that also keeps track
   of the amount of arguments and checks that they are all identifiers.*/
@@ -166,7 +165,6 @@ ast_t *parse_list(parser_t *parser) {
     cur->cdr = init_ast_pair(NULL, NULL);
     cur = cur->cdr;
     first_entry = false;
-    parser_move(parser);
     current_token = parser->tokens[parser->i];
   }
   parser_move(parser);

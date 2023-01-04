@@ -2,7 +2,7 @@
 #include "./include/ast.h"
 #include <stdio.h>
 
-void print_string(ast_t *str) { printf("=> %s\n", str->string_value); }
+void print_string(ast_t *str) { printf("=> \"%s\"\n", str->string_value); }
 
 void print_int(ast_t *i) { printf("=> %d\n", i->int_value); }
 
