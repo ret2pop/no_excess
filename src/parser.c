@@ -14,7 +14,7 @@ parser_t *init_parser(lexer_t *lexer) {
 
   p->i = 0;
   p->tokens = malloc(sizeof(token_t *));
-  p->symbol_table = init_hash_table(10000);
+  p->symbol_table = init_hash_table(1000);
   p->finished = false;
   if (p->tokens == NULL)
     die("malloc on p->tokens");
@@ -117,6 +117,8 @@ ast_t *parse_function(parser_t *parser) {
   ast_t *car = parse_function_args(parser);
   ast_t *cdr =
       parse_expr(parser); /* a function can contain a single expression */
+  if (cdr == NULL)
+    parser_error(parser);
   parser_eat(parser, TOKEN_RPAREN);
   return init_ast_function(car, cdr);
 }

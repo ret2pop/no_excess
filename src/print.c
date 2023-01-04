@@ -17,9 +17,10 @@ void print_float(ast_t *f) { printf("=> %f\n", f->float_value); }
 
 void print_symbol(ast_t *s) { printf("=> %s\n", s->string_value); }
 
-void print_func(ast_t *f) {}
+void print_func(ast_t *f) { print_pair(f->cdr); }
 
 void print_pair(ast_t *p) {}
+
 void print(ast_t *res) {
   switch (res->type) {
   case AST_STRING:
@@ -47,4 +48,9 @@ void print(ast_t *res) {
     printf("Yeah, let's not do that\n");
     break;
   }
+}
+
+void print_root(ast_t *root) {
+  for (int i = 0; i < root->root_size; i++)
+    print(root->subnodes[i]);
 }

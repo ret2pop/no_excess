@@ -19,4 +19,6 @@ void print_symbol(ast_t *s);
 void print_pair(ast_t *p);
 
 void print(ast_t *res);
+
+void print_root(ast_t *root);
 #endif

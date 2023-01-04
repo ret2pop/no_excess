@@ -40,17 +40,11 @@ int main(int argc, char **argv) {
   /*     printf("lmao\n"); */
   /*   } */
   /* } */
-
   /* TEST PARSER, VISITOR, PRINTER */
-  lexer_t *lexer = init_lexer("34.4");
+  lexer_t *lexer = init_lexer("\"hello world\"");
   parser_t *parser = init_parser(lexer);
-
-  ast_t *root = parse_expr(parser);
-
-  visitor_t *v = init_visitor(root);
-
-  ast_t *res = eval_expr(v, root);
-
-  print(res);
+  visitor_t *visitor = init_visitor(parser);
+  ast_t *root = eval(visitor);
+  print_root(root);
   return 0;
 }

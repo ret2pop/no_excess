@@ -13,7 +13,7 @@ visitor_t *init_visitor(parser_t *p) {
     die("malloc on visitor");
   v->stack_frame = init_stack(512);
   v->symbol_table = p->symbol_table;
-  v->eval_table = init_hash_table(10000);
+  v->eval_table = init_hash_table(1000);
   v->root = parse_all(p);
   return v;
 }
@@ -28,7 +28,39 @@ bool is_self_evaluating(ast_t *e) {
   return false;
 }
 
-bool is_built_in(ast_t *e) {}
+bool is_built_in(ast_t *e) {
+  char *cmp = e->string_value;
+  /* Basic mathematics */
+  if (strcmp(cmp, "*") == 0 || strcmp(cmp, "+") == 0 || strcmp(cmp, "-") == 0 ||
+      strcmp(cmp, "/") == 0 || strcmp(cmp, "%") == 0)
+    return true;
+
+  /* Some string and list operations */
+  if (strcmp(cmp, "concat") == 0 || strcmp(cmp, "len") == 0 ||
+      strcmp(cmp, "car") == 0 || strcmp(cmp, "cdr") == 0 ||
+      strcmp(cmp, "cons") == 0)
+    return true;
+
+  if (strcmp(cmp, "<") == 0 || strcmp(cmp, ">") == 0 || strcmp(cmp, "=") == 0 ||
+      strcmp(cmp, "<=") == 0 || strcmp(cmp, ">=") == 0 ||
+      strcmp(cmp, "eq") == 0)
+    return true;
+
+  /* Type-checking */
+  if (strcmp(cmp, "bool?") == 0 || strcmp(cmp, "int?") == 0 ||
+      strcmp(cmp, "symbol?") == 0 || strcmp(cmp, "float?") == 0 ||
+      strcmp(cmp, "string?") == 0 || strcmp(cmp, "pair?") == 0 ||
+      strcmp(cmp, "func?") == 0)
+    return true;
+
+  /* Type conversions */
+  if (strcmp(cmp, "atoi") == 0 || strcmp(cmp, "itof") == 0 ||
+      strcmp(cmp, "ftoi") == 0 || strcmp(cmp, "itoa") == 0 ||
+      strcmp(cmp, "atof") == 0 || strcmp(cmp, "ftoa") == 0)
+    return true;
+
+  return false;
+}
 /* Special symbols: car, cdr, quote, *, /, +, -, %, inc, dec, >, <, >=, <=, /=,
  * =, equal (for strings), input */
 ast_t *eval_symbol(visitor_t *v, ast_t *e) {
@@ -67,11 +99,14 @@ ast_t *eval_expr(visitor_t *v, ast_t *e) {
 ast_t *eval(visitor_t *v) {
   ast_t *cur;
   ast_t *root;
-  ast_t **eval_nodes;
-  int j = 0;
+  ast_t **eval_nodes = malloc(sizeof(ast_t *));
   for (int i = 0; i < v->root->root_size; i++) {
     cur = eval_expr(v, v->root->subnodes[i]);
+    eval_nodes = realloc(eval_nodes, (i + 1) * sizeof(ast_t *));
+    eval_nodes[i] = cur;
   }
+  root = init_ast_root(eval_nodes, v->root->root_size);
+  return root;
 }
 
 void eval_error(visitor_t *v, ast_t *e) { exit(1); }
