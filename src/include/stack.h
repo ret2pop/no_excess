@@ -6,7 +6,7 @@ typedef struct {
   int cur;
 } stack_t;
 
-stack_t *init_stack(int ht_size);
+stack_t *init_stack();
 
 void stack_push(stack_t *s, hash_table_t *h);
 

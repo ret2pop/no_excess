@@ -36,29 +36,14 @@ sl_list_t *init_sl_list() {
 
 /* TODO: fix segfault bug */
 void sl_list_add(sl_list_t *l, char *key, ast_t *value) {
-  sl_node_t *cur = l->head;
-  bool modified = false;
   if (l->head == NULL) {
     l->head = init_sl_node(key, value);
     l->size++;
     return;
-  }
-
-  for (int i = 0; i < l->size - 1; i++) {
-    if (strcmp(cur->value->key, key) == 0) {
-      cur->value->value = value;
-      modified = true;
-      break;
-    }
-    cur = cur->next;
-  }
-
-  if (strcmp(cur->value->key, key) == 0) {
-    cur->value->value = value;
-    modified = true;
-  }
-
-  if (!modified) {
+  } else {
+    sl_node_t *cur = l->head;
+    while (cur->next != NULL)
+      cur = cur->next;
     cur->next = init_sl_node(key, value);
     l->size++;
   }
@@ -66,6 +51,8 @@ void sl_list_add(sl_list_t *l, char *key, ast_t *value) {
 
 ast_t *sl_list_get(sl_list_t *l, char *key) {
   sl_node_t *cur = l->head;
+  if (cur == NULL)
+    return NULL;
   for (int i = 0; i < l->size; i++) {
     if (strcmp(cur->value->key, key) == 0)
       return cur->value->value;
@@ -83,10 +70,10 @@ bool sl_list_exists(sl_list_t *l, char *key) {
 void sl_list_free(sl_list_t *l) {
   sl_node_t *cur = l->head;
   sl_node_t *tmp;
-  for (int i = 0; i < l->size; i++) {
+  while (cur != NULL) {
     tmp = cur;
     cur = cur->next;
-    free(tmp);
+    free(cur);
   }
   free(l);
 }
@@ -106,6 +93,10 @@ hash_table_t *init_hash_table(int size) {
 }
 
 void hash_table_add(hash_table_t *h, char *key, ast_t *value) {
+  if (hash_table_exists(h, key)) {
+    printf("BUG!\n");
+    return;
+  }
   sl_list_t *l = h->buckets[hash(key, h->size)];
   sl_list_add(l, key, value);
 }

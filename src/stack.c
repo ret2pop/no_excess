@@ -1,9 +1,10 @@
 #include "./include/stack.h"
 #include "./include/hash_table.h"
 #include "./include/macros.h"
+#include <stdio.h>
 #include <stdlib.h>
 
-stack_t *init_stack(int ht_size) {
+stack_t *init_stack() {
   stack_t *s = (stack_t *)malloc(sizeof(stack_t));
   if (s == NULL)
     die("malloc on stack");
@@ -16,9 +17,9 @@ void stack_push(stack_t *s, hash_table_t *h) {
   if (s->stack == NULL) {
     s->stack = malloc(sizeof(hash_table_t *));
     if (s->stack == NULL)
-      die("malloc on stack within stack");
+      die("malloc on stack within stack_push");
   } else {
-    s->stack = realloc(s->stack, 2 + s->cur);
+    s->stack = realloc(s->stack, (2 + s->cur) * sizeof(hash_table_t *));
   }
   s->cur++;
   s->stack[s->cur] = h;

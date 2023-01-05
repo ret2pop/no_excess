@@ -1,6 +1,6 @@
 #include "./include/ast.h"
+#include <stdio.h>
 #include <stdlib.h>
-
 /* A very... lightweight version of "inheritance" */
 ast_t *init_ast(int type) {
   ast_t *a = (ast_t *)malloc(sizeof(ast_t));
@@ -63,4 +63,24 @@ ast_t *init_ast_root(ast_t **subnodes, int size) {
   a->subnodes = subnodes;
   a->root_size = size;
   return a;
+}
+
+void ast_type_print(ast_t *e) {
+  if (e->type == AST_FUNCTION) {
+    printf("Function\n");
+  } else if (e->type == AST_INT) {
+    printf("Integer\n");
+  } else if (e->type == AST_FLOAT) {
+    printf("Float\n");
+  } else if (e->type == AST_BOOL) {
+    printf("Bool\n");
+  } else if (e->type == AST_SYMBOL) {
+    printf("Symbol\n");
+  } else if (e->type == AST_PAIR) {
+    printf("Pair\n");
+  } else if (e->type == AST_STRING) {
+    printf("String\n");
+  } else if (e->type == AST_ROOT) {
+    printf("Root Node\n");
+  }
 }

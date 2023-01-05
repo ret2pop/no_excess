@@ -14,7 +14,7 @@ parser_t *init_parser(lexer_t *lexer) {
 
   p->i = 0;
   p->tokens = malloc(sizeof(token_t *));
-  p->symbol_table = init_hash_table(1000);
+  p->symbol_table = init_hash_table(400);
   p->finished = false;
   if (p->tokens == NULL)
     die("malloc on p->tokens");
@@ -112,8 +112,6 @@ ast_t *parse_function_args(parser_t *parser) {
 
 ast_t *parse_function(parser_t *parser) {
   parser_eat(parser, TOKEN_LPAREN);
-  /* TODO: actually write a helper function that also keeps track
-  of the amount of arguments and checks that they are all identifiers.*/
   ast_t *car = parse_function_args(parser);
   ast_t *cdr =
       parse_expr(parser); /* a function can contain a single expression */
@@ -134,11 +132,13 @@ void parse_bind(parser_t *parser) {
   parser_move(parser);
   ast_t *expr = parse_expr(parser); /* unevaluated expr will be evaluated when
                                        hash table transfers to visitor JIT */
+
   hash_table_add(parser->symbol_table, name, expr);
 
+  if (parser->tokens[parser->i]->type != TOKEN_RPAREN)
+    parser_error(parser);
+
   parser_move(parser);
-  /* if (parser->tokens[parser->i]->type != TOKEN_RPAREN) */
-  /*   parser_error(parser); */
 }
 
 ast_t *parse_list(parser_t *parser) {

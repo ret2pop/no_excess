@@ -83,7 +83,7 @@ int main(int argc, char **argv) {
   /* DONE: TEST PARSING AND STORING BINDINGS */
   /* lexer_t *lexer = init_lexer("(bind x \"hello world\")"); */
   /* parser_t *parser = init_parser(lexer); */
-  /* ast_t *root = parse_all(parser); */
+  /* parse_all(parser); */
   /* if (hash_table_exists(parser->symbol_table, "x")) { */
   /*   printf("YES!\n"); */
   /*   ast_t *str = hash_table_get(parser->symbol_table, "x"); */
@@ -92,11 +92,21 @@ int main(int argc, char **argv) {
 
   /* TODO: TEST HASH TABLE COLLISIONS */
   /* DONE: TEST BUILTIN FUNCTIONS */
-  lexer_t *lexer = init_lexer("(/ (+ 3.0 4.0) 4)");
+  /* lexer_t *lexer = init_lexer("(* (+ 3.0 4.0) 4)"); */
+  /* parser_t *parser = init_parser(lexer); */
+  /* visitor_t *visitor = init_visitor(parser); */
+  /* ast_t *root = eval(visitor); */
+  /* ast_t *res = root->subnodes[0]; */
+  /* print(res); */
+  /* TODO: TEST NON-BUILTIN FUNCTIONS (stack frame) */
+
+  lexer_t *lexer = init_lexer("((lambda (x y) (+ x y)) (+ 3.0 4.0) 4)");
   parser_t *parser = init_parser(lexer);
   visitor_t *visitor = init_visitor(parser);
+
   ast_t *root = eval(visitor);
   ast_t *res = root->subnodes[0];
-  printf("%f\n", res->float_value);
+  print(res);
+
   return 0;
 }
