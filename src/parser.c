@@ -127,15 +127,18 @@ ast_t *parse_function(parser_t *parser) {
 
 void parse_bind(parser_t *parser) {
   parser_move(parser);
-  parser_eat(parser, TOKEN_ID);
-
+  if (parser->tokens[parser->i]->type != TOKEN_ID)
+    parser_error(parser);
   token_t *t = parser->tokens[parser->i];
   char *name = t->value;
   parser_move(parser);
   ast_t *expr = parse_expr(parser); /* unevaluated expr will be evaluated when
                                        hash table transfers to visitor JIT */
-
   hash_table_add(parser->symbol_table, name, expr);
+
+  parser_move(parser);
+  /* if (parser->tokens[parser->i]->type != TOKEN_RPAREN) */
+  /*   parser_error(parser); */
 }
 
 ast_t *parse_list(parser_t *parser) {
@@ -201,8 +204,11 @@ ast_t *parse_expr(parser_t *parser) {
     return parse_symbol(parser);
   else if (t->type == TOKEN_LPAREN)
     return parse_list(parser);
-  else
+  else {
+    printf("DEBUG\n");
+    printf("%d", t->type);
     parser_error(parser);
+  }
   return NULL;
 }
 

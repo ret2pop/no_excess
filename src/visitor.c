@@ -68,11 +68,10 @@ ast_t *eval_symbol(visitor_t *v, ast_t *e) {
   if (is_built_in(e))
     return e;
 
-  else if (hash_table_exists(stack_peek(v->stack_frame), e->string_value))
-    return hash_table_get(stack_peek(v->stack_frame), e->string_value);
-
   else if (hash_table_exists(v->eval_table, e->string_value))
     return hash_table_get(v->eval_table, e->string_value);
+  else if (hash_table_exists(stack_peek(v->stack_frame), e->string_value))
+    return hash_table_get(stack_peek(v->stack_frame), e->string_value);
 
   else if (hash_table_exists(v->symbol_table, e->string_value)) {
     ast_t *unevaled = hash_table_get(v->symbol_table, e->string_value);

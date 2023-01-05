@@ -2,6 +2,7 @@
 #include "./include/ast.h"
 #include "./include/macros.h"
 #include <stdbool.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -33,12 +34,14 @@ sl_list_t *init_sl_list() {
   return l;
 }
 
+/* TODO: fix segfault bug */
 void sl_list_add(sl_list_t *l, char *key, ast_t *value) {
   sl_node_t *cur = l->head;
   bool modified = false;
   if (l->head == NULL) {
     l->head = init_sl_node(key, value);
     l->size++;
+    return;
   }
 
   for (int i = 0; i < l->size - 1; i++) {
@@ -49,6 +52,7 @@ void sl_list_add(sl_list_t *l, char *key, ast_t *value) {
     }
     cur = cur->next;
   }
+
   if (strcmp(cur->value->key, key) == 0) {
     cur->value->value = value;
     modified = true;

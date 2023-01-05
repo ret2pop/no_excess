@@ -63,20 +63,34 @@ int main(int argc, char **argv) {
   /* printf("%s\n", world->string_value); */
   /* printf("%d\n", fal->bool_value); */
 
-  /* TODO: TEST PARSING FUNCTIONS */
-  lexer_t *lexer = init_lexer("(lambda (x) (y))");
-  printf("why is code not working, part 1\n");
-  parser_t *parser = init_parser(lexer);
-  printf("why is code not working, part 2\n");
-  ast_t *root = parse_all(parser);
+  /* DONE: TEST PARSING FUNCTIONS */
+  /* lexer_t *lexer = init_lexer("(lambda (x) (y))"); */
+  /* parser_t *parser = init_parser(lexer); */
+  /* ast_t *root = parse_all(parser); */
+  /* ast_t *func = root->subnodes[0]; */
+  /* ast_t *args = func->car; */
+  /* ast_t *expr = func->cdr; */
+  /* printf("%d\t%s\t\%s\n", func->type, args->car->string_value, */
+  /*        expr->car->string_value); */
 
-  ast_t *func = root->subnodes[0];
-  printf("%d\n", func->type);
   /* DONE: TEST PARSING QUOTE */
   /* lexer_t *lexer = init_lexer("'(hello)"); */
   /* parser_t *parser = init_parser(lexer); */
   /* ast_t *root = parse_all(parser); */
   /* ast_t *quote = root->subnodes[0]; */
   /* printf("%s\n", quote->cdr->car->car->string_value); */
+
+  /* DONE: TEST PARSING AND STORING BINDINGS */
+  /* lexer_t *lexer = init_lexer("(bind x \"hello world\")"); */
+  /* parser_t *parser = init_parser(lexer); */
+  /* ast_t *root = parse_all(parser); */
+  /* if (hash_table_exists(parser->symbol_table, "x")) { */
+  /*   printf("YES!\n"); */
+  /*   ast_t *str = hash_table_get(parser->symbol_table, "x"); */
+  /*   printf("%s\n", str->string_value); */
+  /* } */
+
+  /* TODO: TEST HASH TABLE COLLISIONS */
+  /* TODO: TEST LIST EVALUATION */
   return 0;
 }
