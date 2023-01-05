@@ -85,8 +85,7 @@ ast_t *eval_symbol(visitor_t *v, ast_t *e) {
     hash_table_add(v->eval_table, e->string_value, eval);
     return eval;
   } else
-    printf("DEBUG 2\n");
-  eval_error(v, e);
+    eval_error(v, e);
 }
 
 /* Helper function to get the size of an AST linked list; useful for checking
@@ -126,10 +125,73 @@ ast_t *eval_list(visitor_t *v, ast_t *e) {
         return init_ast_float(arg1->float_value + arg2->int_value);
       } else if ((arg1->type == AST_FLOAT) && (arg2->type) == AST_FLOAT) {
         return init_ast_float(arg1->float_value + arg2->float_value);
-      }
+      } else
+        eval_error(v, e);
+    } else if (strcmp(function->string_value, "-") == 0) {
+      if (cmp != 2)
+        eval_error(v, e);
+
+      ast_t *arg1 = eval_expr(v, args->car);
+      ast_t *arg2 = eval_expr(v, args->cdr->car);
+
+      if ((arg1->type == AST_INT) && (arg2->type == AST_INT)) {
+        return init_ast_int(arg1->int_value - arg2->int_value);
+      } else if ((arg1->type == AST_INT) && (arg2->type == AST_FLOAT)) {
+        return init_ast_float(arg1->int_value - arg2->float_value);
+      } else if ((arg1->type == AST_FLOAT) && (arg2->type == AST_INT)) {
+        return init_ast_float(arg1->float_value - arg2->int_value);
+      } else if ((arg1->type == AST_FLOAT) && (arg2->type) == AST_FLOAT) {
+        return init_ast_float(arg1->float_value - arg2->float_value);
+      } else
+        eval_error(v, e);
+    } else if (strcmp(function->string_value, "*") == 0) {
+      if (cmp != 2)
+        eval_error(v, e);
+
+      ast_t *arg1 = eval_expr(v, args->car);
+      ast_t *arg2 = eval_expr(v, args->cdr->car);
+
+      if ((arg1->type == AST_INT) && (arg2->type == AST_INT)) {
+        return init_ast_int(arg1->int_value * arg2->int_value);
+      } else if ((arg1->type == AST_INT) && (arg2->type == AST_FLOAT)) {
+        return init_ast_float(arg1->int_value * arg2->float_value);
+      } else if ((arg1->type == AST_FLOAT) && (arg2->type == AST_INT)) {
+        return init_ast_float(arg1->float_value * arg2->int_value);
+      } else if ((arg1->type == AST_FLOAT) && (arg2->type) == AST_FLOAT) {
+        return init_ast_float(arg1->float_value * arg2->float_value);
+      } else
+        eval_error(v, e);
+    } else if (strcmp(function->string_value, "/") == 0) {
+      if (cmp != 2)
+        eval_error(v, e);
+
+      ast_t *arg1 = eval_expr(v, args->car);
+      ast_t *arg2 = eval_expr(v, args->cdr->car);
+
+      if ((arg1->type == AST_INT) && (arg2->type == AST_INT)) {
+        return init_ast_float(arg1->int_value / arg2->int_value);
+      } else if ((arg1->type == AST_INT) && (arg2->type == AST_FLOAT)) {
+        return init_ast_float(arg1->int_value / arg2->float_value);
+      } else if ((arg1->type == AST_FLOAT) && (arg2->type == AST_INT)) {
+        return init_ast_float(arg1->float_value / arg2->int_value);
+      } else if ((arg1->type == AST_FLOAT) && (arg2->type) == AST_FLOAT) {
+        return init_ast_float(arg1->float_value / arg2->float_value);
+      } else
+        eval_error(v, e);
+    } else if (strcmp(function->string_value, "%") == 0) {
+      if (cmp != 2)
+        eval_error(v, e);
+
+      ast_t *arg1 = eval_expr(v, args->car);
+      ast_t *arg2 = eval_expr(v, args->cdr->car);
+
+      if ((arg1->type == AST_INT) && (arg2->type == AST_INT)) {
+        return init_ast_int(arg1->int_value * arg2->int_value);
+      } else
+        eval_error(v, e);
     }
   }
-
+  /* NON BUILT-INS */
   /* Checking that the parameters are actually valid */
   if (function->type != AST_FUNCTION)
     eval_error(v, e->car);
@@ -167,7 +229,6 @@ ast_t *eval_expr(visitor_t *v, ast_t *e) {
   else if (e->type == AST_SYMBOL)
     return eval_symbol(v, e);
   else {
-    printf("DEBUG\n");
     eval_error(v, e);
   }
 }

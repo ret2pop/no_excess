@@ -92,11 +92,11 @@ int main(int argc, char **argv) {
 
   /* TODO: TEST HASH TABLE COLLISIONS */
   /* DONE: TEST BUILTIN FUNCTIONS */
-  lexer_t *lexer = init_lexer("(+ (+ 3 4) 4)");
+  lexer_t *lexer = init_lexer("(/ (+ 3.0 4.0) 4)");
   parser_t *parser = init_parser(lexer);
   visitor_t *visitor = init_visitor(parser);
   ast_t *root = eval(visitor);
   ast_t *res = root->subnodes[0];
-  printf("%d\n", res->int_value);
+  printf("%f\n", res->float_value);
   return 0;
 }
