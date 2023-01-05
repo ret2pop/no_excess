@@ -91,6 +91,12 @@ int main(int argc, char **argv) {
   /* } */
 
   /* TODO: TEST HASH TABLE COLLISIONS */
-  /* TODO: TEST LIST EVALUATION */
+  /* DONE: TEST BUILTIN FUNCTIONS */
+  lexer_t *lexer = init_lexer("(+ (+ 3 4) 4)");
+  parser_t *parser = init_parser(lexer);
+  visitor_t *visitor = init_visitor(parser);
+  ast_t *root = eval(visitor);
+  ast_t *res = root->subnodes[0];
+  printf("%d\n", res->int_value);
   return 0;
 }

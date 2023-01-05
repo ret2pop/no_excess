@@ -38,7 +38,7 @@ bool is_built_in(ast_t *e) {
   /* Some string and list operations */
   if (strcmp(cmp, "concat") == 0 || strcmp(cmp, "len") == 0 ||
       strcmp(cmp, "car") == 0 || strcmp(cmp, "cdr") == 0 ||
-      strcmp(cmp, "cons") == 0)
+      strcmp(cmp, "cons") == 0 || strcmp(cmp, "quote") == 0)
     return true;
 
   /* Comparison functions */
@@ -62,27 +62,102 @@ bool is_built_in(ast_t *e) {
 
   return false;
 }
+
 /* Special symbols: car, cdr, quote, *, /, +, -, %, inc, dec, >, <, >=, <=, /=,
  * =, equal (for strings), input */
 ast_t *eval_symbol(visitor_t *v, ast_t *e) {
   if (is_built_in(e))
     return e;
 
-  else if (hash_table_exists(v->eval_table, e->string_value))
-    return hash_table_get(v->eval_table, e->string_value);
+  /* first, it looks in the stack frame for a variable */
   else if (hash_table_exists(stack_peek(v->stack_frame), e->string_value))
     return hash_table_get(stack_peek(v->stack_frame), e->string_value);
 
+  /* Then the variables that have already been evaluated */
+  else if (hash_table_exists(v->eval_table, e->string_value))
+    return hash_table_get(v->eval_table, e->string_value);
+
+  /* then it goes into the symbol table, evaluates the variable if it finds it
+   * and puts it in the list of variables that have already been evaluated */
   else if (hash_table_exists(v->symbol_table, e->string_value)) {
     ast_t *unevaled = hash_table_get(v->symbol_table, e->string_value);
     ast_t *eval = eval_expr(v, unevaled);
     hash_table_add(v->eval_table, e->string_value, eval);
     return eval;
   } else
-    return e;
+    printf("DEBUG 2\n");
+  eval_error(v, e);
 }
 
-ast_t *eval_list(visitor_t *v, ast_t *e) {}
+/* Helper function to get the size of an AST linked list; useful for checking
+ * parameter number */
+int get_list_size(ast_t *root) {
+  if (root->type != AST_PAIR)
+    return -1;
+  int size = 0;
+  ast_t *cur = root;
+  while (cur->cdr != NULL) {
+    size++;
+    cur = cur->cdr;
+  }
+  return size;
+}
+
+ast_t *eval_list(visitor_t *v, ast_t *e) {
+  ast_t *function = eval_expr(v, e->car);
+  ast_t *args = e->cdr;
+  int arg_size;
+  int cmp = get_list_size(args);
+
+  /* BUILT-IN FUNCTIONS */
+  if (function->type == AST_SYMBOL) {
+    if (strcmp(function->string_value, "+") == 0) {
+      if (cmp != 2)
+        eval_error(v, e);
+
+      ast_t *arg1 = eval_expr(v, args->car);
+      ast_t *arg2 = eval_expr(v, args->cdr->car);
+
+      if ((arg1->type == AST_INT) && (arg2->type == AST_INT)) {
+        return init_ast_int(arg1->int_value + arg2->int_value);
+      } else if ((arg1->type == AST_INT) && (arg2->type == AST_FLOAT)) {
+        return init_ast_float(arg1->int_value + arg2->float_value);
+      } else if ((arg1->type == AST_FLOAT) && (arg2->type == AST_INT)) {
+        return init_ast_float(arg1->float_value + arg2->int_value);
+      } else if ((arg1->type == AST_FLOAT) && (arg2->type) == AST_FLOAT) {
+        return init_ast_float(arg1->float_value + arg2->float_value);
+      }
+    }
+  }
+
+  /* Checking that the parameters are actually valid */
+  if (function->type != AST_FUNCTION)
+    eval_error(v, e->car);
+
+  arg_size = get_list_size(function->car);
+
+  if (arg_size != cmp)
+    eval_error(v, e->car);
+
+  hash_table_t *stack_frame = init_hash_table(512);
+
+  ast_t *cur_arg_name = function->car;
+  ast_t *cur_arg = args;
+  char *name;
+  ast_t *evaled_arg;
+  while (cur_arg != NULL && cur_arg_name != NULL) {
+    name = cur_arg_name->car->string_value;
+    evaled_arg = eval_expr(v, cur_arg->car);
+    hash_table_add(stack_frame, name, evaled_arg);
+    cur_arg_name = cur_arg_name->cdr;
+    cur_arg = cur_arg->cdr;
+  }
+  stack_push(v->stack_frame, stack_frame);
+  ast_t *res = eval_expr(v, function->cdr);
+  stack_frame = stack_pop(v->stack_frame);
+  hash_table_free(stack_frame);
+  return res;
+}
 
 ast_t *eval_expr(visitor_t *v, ast_t *e) {
   if (is_self_evaluating(e))
@@ -92,6 +167,7 @@ ast_t *eval_expr(visitor_t *v, ast_t *e) {
   else if (e->type == AST_SYMBOL)
     return eval_symbol(v, e);
   else {
+    printf("DEBUG\n");
     eval_error(v, e);
   }
 }
@@ -109,4 +185,7 @@ ast_t *eval(visitor_t *v) {
   return root;
 }
 
-void eval_error(visitor_t *v, ast_t *e) { exit(1); }
+void eval_error(visitor_t *v, ast_t *e) {
+  printf("ERROR: something went wrong with the visitor.\n");
+  exit(1);
+}
