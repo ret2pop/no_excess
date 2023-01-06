@@ -1,1 +1,3 @@
-src/a.out
+nxs
+diffs/**
+hash_table_new.c

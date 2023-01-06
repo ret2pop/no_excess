@@ -12,6 +12,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+// Read the file into allocated memory.
+// Return NULL on error.
+
 int main(int argc, char **argv) {
   /* DONE: TEST LEXER */
   /* lexer_t *lexer = init_lexer("'(fasd asdf)"); */
@@ -84,15 +87,16 @@ int main(int argc, char **argv) {
   /* ast_t *root = eval(visitor); */
   /* print_root(root); */
 
-  /* TODO: TEST RECURSION */
+  /* DONE: TEST RECURSION */
   /* char *expr = "(if (= 0 0) 1 2)"; */
-  char *expr = "(bind factorial (lambda (n) (if (= n 0) 1 (* n (factorial (- n "
-               "1)))))) (factorial 3)";
-  lexer_t *lexer = init_lexer(expr);
-  parser_t *parser = init_parser(lexer);
-  visitor_t *visitor = init_visitor(parser);
-  ast_t *root = eval(visitor);
-  print_root(root);
+  /* char *expr = "(bind factorial (lambda (n) (if (= n 0) 1 (* n (factorial (-
+   * n " */
+  /*              "1)))))) (factorial 3)"; */
+  /* lexer_t *lexer = init_lexer(expr); */
+  /* parser_t *parser = init_parser(lexer); */
+  /* visitor_t *visitor = init_visitor(parser); */
+  /* ast_t *root = eval(visitor); */
+  /* print_root(root); */
 
   /*   lexer_t *lexer = init_lexer("((lambda (x y) (+ x y)) (+ 3 4) 4) (+ 3
    * 4)"); */
@@ -121,6 +125,36 @@ int main(int argc, char **argv) {
   /*   getline(&buf, &size, stdin); */
   /*   lexer_reset(lexer, buf); */
   /* } */
+
+  /* DONE: BE ABLE TO READ IN FILE AS INPUT */
+  if (argc < 2) {
+    printf("TOO FEW ARGUMENTS.\n");
+    exit(1);
+  }
+  char *filename = argv[1];
+  char *buffer = 0;
+  long length;
+  FILE *f = fopen(filename, "rb");
+
+  if (f) {
+    fseek(f, 0, SEEK_END);
+    length = ftell(f);
+    fseek(f, 0, SEEK_SET);
+    buffer = malloc(length);
+    if (buffer) {
+      fread(buffer, 1, length, f);
+    }
+    fclose(f);
+  }
+
+  if (buffer) {
+    /* printf("%s", buffer); */
+    lexer_t *lexer = init_lexer(buffer);
+    parser_t *parser = init_parser(lexer);
+    visitor_t *visitor = init_visitor(parser);
+    ast_t *root = eval(visitor);
+    print_root(root);
+  }
 
   return 0;
 }

@@ -38,8 +38,11 @@ void lexer_move(lexer_t *lexer) {
 }
 
 void lexer_ignore_whitespace(lexer_t *lexer) {
-  while (isspace(lexer->c))
+  while (isspace(lexer->c)) {
+    if (lexer->c == '\0')
+      return;
     lexer_move(lexer);
+  }
 }
 
 void lexer_skip_comment(lexer_t *lexer) {
@@ -120,13 +123,18 @@ static token_t *lexer_move_with(lexer_t *lexer, token_t *token) {
 }
 
 token_t *lexer_collect_next(lexer_t *lexer) {
-  if (lexer->c == '\0') {
+  if (lexer->c == '\0' || lexer->c == EOF) {
     lexer->finished = true;
     return NULL;
   }
-  if (isspace(lexer->c))
-    lexer_ignore_whitespace(lexer);
 
+  if (isspace(lexer->c)) {
+    lexer_ignore_whitespace(lexer);
+  }
+  if (lexer->c == '\0' || lexer->c == EOF) {
+    lexer->finished = true;
+    return NULL;
+  }
   if (isdigit(lexer->c))
     return lexer_collect_num(lexer);
   else if (is_valid_id_char(lexer->c))
@@ -147,6 +155,8 @@ token_t *lexer_collect_next(lexer_t *lexer) {
   else if (lexer->c == '.')
     return lexer_move_with(
         lexer, init_token(TOKEN_PERIOD, ".", lexer->row, lexer->col));
-  else
+  else {
+    printf("returns null\n");
     return NULL;
+  }
 }

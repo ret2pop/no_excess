@@ -31,7 +31,6 @@ parser_t *init_parser(lexer_t *lexer) {
     if (t == NULL)
       break;
   }
-
   p->size = size;
   return p;
 }
