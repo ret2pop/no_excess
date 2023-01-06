@@ -78,21 +78,14 @@ int main(int argc, char **argv) {
   /* print(res); */
 
   /* DONE: TEST NON-BUILTIN FUNCTIONS (stack frame) */
-  lexer_t *lexer = init_lexer("(bind my_func (lambda (x y) (+ x "
-                              "y))) (my_func (+ 3 4) 4) (+ 3 4)");
-  printf("%ld\n", hash("my_func", 100));
-  printf("%ld\n", hash("my_func", 100));
-  printf("debug 1\n");
+  lexer_t *lexer = init_lexer("(bind my_var 3) (bind hello (lambda (x y) (+ x "
+                              "y))) (hello (+ my_var 4) 4) (+ my_var 4)");
   parser_t *parser = init_parser(lexer);
-  printf("debug 2\n");
   visitor_t *visitor = init_visitor(parser);
-  printf("debug 3\n");
   ast_t *root = eval(visitor);
-  printf("debug 4\n");
   print_root(root);
-  printf("debug 5\n");
-  ast_t *res = root->subnodes[0];
-  print(res);
+  /* ast_t *res = root->subnodes[0]; */
+  /* print(res); */
 
   /*   lexer_t *lexer = init_lexer("((lambda (x y) (+ x y)) (+ 3 4) 4) (+ 3
    * 4)"); */

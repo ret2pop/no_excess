@@ -65,7 +65,6 @@ sl_list_t *init_sl_list() {
 /* } */
 
 void sl_list_add(sl_list_t *l, char *key, ast_t *value) {
-  printf("sl list add %s\n", key);
   sl_node_t *cur = l->head;
   if (cur == NULL) {
     l->head = init_sl_node(key, value);
@@ -75,7 +74,6 @@ void sl_list_add(sl_list_t *l, char *key, ast_t *value) {
       cur = cur->next;
     }
     cur->next = init_sl_node(key, value);
-    printf("sl list cur->next %s\n", cur->next->value->key);
     l->size++;
   }
 }
@@ -123,7 +121,6 @@ hash_table_t *init_hash_table(int size) {
 }
 
 void hash_table_add(hash_table_t *h, char *key, ast_t *value) {
-  printf("entering here? %s\n", key);
   sl_list_t *l = h->buckets[hash(key, h->size)];
   sl_list_add(l, key, value);
 }
@@ -134,7 +131,6 @@ ast_t *hash_table_get(hash_table_t *h, char *key) {
 }
 
 bool hash_table_exists(hash_table_t *h, char *key) {
-  printf("entering here? %s\n", key);
   sl_list_t *l = h->buckets[hash(key, h->size)];
   return sl_list_exists(l, key);
 }

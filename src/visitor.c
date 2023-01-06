@@ -68,7 +68,6 @@ bool is_built_in(ast_t *e) {
 ast_t *eval_symbol(visitor_t *v, ast_t *e) {
   /* hash_table_t *lmao = stack_peek(v->stack_frame); */
   hash_table_t *h = stack_peek(v->stack_frame);
-  printf("%s\n", e->string_value);
   if (is_built_in(e))
     return e;
   /* first, it looks in the stack frame for a variable */
@@ -87,7 +86,6 @@ ast_t *eval_symbol(visitor_t *v, ast_t *e) {
     hash_table_add(v->eval_table, e->string_value, eval);
     return eval;
   } else {
-    printf("this eval error\n");
     eval_error(v, e);
     return NULL;
   }

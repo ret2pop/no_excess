@@ -24,9 +24,9 @@ void stack_push(stack_t *s, hash_table_t *h) {
   s->cur++;
   s->stack[s->cur] = h;
 }
-
+/* fix heap buffer overflow */
 hash_table_t *stack_peek(stack_t *s) {
-  if (s->stack == NULL)
+  if (s->cur == -1)
     return NULL;
   return s->stack[s->cur];
 }
