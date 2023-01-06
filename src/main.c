@@ -78,14 +78,20 @@ int main(int argc, char **argv) {
   /* print(res); */
 
   /* DONE: TEST NON-BUILTIN FUNCTIONS (stack frame) */
-  lexer_t *lexer = init_lexer("(bind my_var 3) (bind hello (lambda (x y) (+ x "
-                              "y))) (hello (+ my_var 4) 4) (+ my_var 4)");
-  parser_t *parser = init_parser(lexer);
-  visitor_t *visitor = init_visitor(parser);
-  ast_t *root = eval(visitor);
-  print_root(root);
-  /* ast_t *res = root->subnodes[0]; */
-  /* print(res); */
+  /* lexer_t *lexer = init_lexer("(if (= (+ 3 2) 5) 1 2)"); */
+  /* parser_t *parser = init_parser(lexer); */
+  /* visitor_t *visitor = init_visitor(parser); */
+  /* ast_t *root = eval(visitor); */
+  /* print_root(root); */
+
+  /* TODO: TEST RECURSION */
+  /* lexer_t *lexer = init_lexer("(bind factorial (lambda (x) (if (<= x 0) 1 (*
+   * x" */
+  /*                             "(factorial (- x 1)))))) (factorial 3)"); */
+  /* parser_t *parser = init_parser(lexer); */
+  /* visitor_t *visitor = init_visitor(parser); */
+  /* ast_t *root = eval(visitor); */
+  /* print_root(root); */
 
   /*   lexer_t *lexer = init_lexer("((lambda (x y) (+ x y)) (+ 3 4) 4) (+ 3
    * 4)"); */

@@ -26,7 +26,7 @@ void stack_push(stack_t *s, hash_table_t *h) {
 }
 /* fix heap buffer overflow */
 hash_table_t *stack_peek(stack_t *s) {
-  if (s->cur == -1)
+  if (is_empty(s))
     return NULL;
   return s->stack[s->cur];
 }
@@ -36,4 +36,10 @@ hash_table_t *stack_pop(stack_t *s) {
   s->stack[s->cur] = NULL;
   s->cur--;
   return h;
+}
+
+bool is_empty(stack_t *s) {
+  if (s->cur == -1)
+    return true;
+  return false;
 }

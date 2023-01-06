@@ -44,7 +44,7 @@ bool is_built_in(ast_t *e) {
   /* Comparison functions */
   if (strcmp(cmp, "<") == 0 || strcmp(cmp, ">") == 0 || strcmp(cmp, "=") == 0 ||
       strcmp(cmp, "<=") == 0 || strcmp(cmp, ">=") == 0 ||
-      strcmp(cmp, "eq") == 0)
+      strcmp(cmp, "eq") == 0 || strcmp(cmp, "if") == 0)
     return true;
 
   /* Type-checking */
@@ -67,6 +67,8 @@ bool is_built_in(ast_t *e) {
  * =, equal (for strings), input */
 ast_t *eval_symbol(visitor_t *v, ast_t *e) {
   /* hash_table_t *lmao = stack_peek(v->stack_frame); */
+  printf("symbol\n");
+  printf("%s\n", e->string_value);
   hash_table_t *h = stack_peek(v->stack_frame);
   if (is_built_in(e))
     return e;
