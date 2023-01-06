@@ -67,13 +67,10 @@ bool is_built_in(ast_t *e) {
  * =, equal (for strings), input */
 ast_t *eval_symbol(visitor_t *v, ast_t *e) {
   /* hash_table_t *lmao = stack_peek(v->stack_frame); */
-  printf("%s\n", e->string_value);
   if (is_built_in(e))
     return e;
   /* first, it looks in the stack frame for a variable */
-  if (stack_peek(v->stack_frame) == NULL) {
-    printf("Does not work\n");
-  } else if (hash_table_exists(stack_peek(v->stack_frame), e->string_value))
+  else if (hash_table_exists(stack_peek(v->stack_frame), e->string_value))
     return hash_table_get(stack_peek(v->stack_frame), e->string_value);
   /* Then the variables that have already been evaluated */
   else if (hash_table_exists(v->eval_table, e->string_value))
@@ -87,7 +84,6 @@ ast_t *eval_symbol(visitor_t *v, ast_t *e) {
     hash_table_add(v->eval_table, e->string_value, eval);
     return eval;
   } else {
-    printf("eval symbol error\n");
     eval_error(v, e);
   }
 }
@@ -127,7 +123,6 @@ ast_t *eval_list(visitor_t *v, ast_t *e) {
       } else if ((arg1->type == AST_FLOAT) && (arg2->type == AST_INT)) {
         return init_ast_float(arg1->float_value + arg2->int_value);
       } else if ((arg1->type == AST_FLOAT) && (arg2->type) == AST_FLOAT) {
-        printf("plus evaled\n");
         return init_ast_float(arg1->float_value + arg2->float_value);
       } else
         eval_error(v, e);
@@ -289,8 +284,116 @@ ast_t *eval_list(visitor_t *v, ast_t *e) {
         return init_ast_int(a);
       } else
         eval_error(v, e);
+    } else if (strcmp(function->string_value, "if") == 0) {
+      if (cmp != 3)
+        eval_error(v, e);
+
+      ast_t *arg1 = eval_expr(v, args->car);
+      ast_t *arg2 = eval_expr(v, args->cdr->car);
+      ast_t *arg3 = eval_expr(v, args->cdr->cdr->car);
+      if (arg1->type == AST_BOOL) {
+        if (arg1->bool_value)
+          return arg2;
+        else
+          return arg3;
+      } else
+        eval_error(v, e);
+    } else if (strcmp(function->string_value, "<") == 0) {
+      if (cmp != 2)
+        eval_error(v, e);
+
+      ast_t *arg1 = eval_expr(v, args->car);
+      ast_t *arg2 = eval_expr(v, args->cdr->car);
+
+      if ((arg1->type == AST_INT) && (arg2->type == AST_INT)) {
+        return init_ast_bool(arg1->int_value < arg2->int_value);
+      } else if ((arg1->type == AST_INT) && (arg2->type == AST_FLOAT)) {
+        return init_ast_bool(arg1->int_value < arg2->float_value);
+      } else if ((arg1->type == AST_FLOAT) && (arg2->type == AST_INT)) {
+        return init_ast_bool(arg1->float_value < arg2->int_value);
+      } else if ((arg1->type == AST_FLOAT) && (arg2->type) == AST_FLOAT) {
+        return init_ast_bool(arg1->float_value < arg2->float_value);
+      } else
+        eval_error(v, e);
+    } else if (strcmp(function->string_value, "=") == 0) {
+      if (cmp != 2)
+        eval_error(v, e);
+
+      ast_t *arg1 = eval_expr(v, args->car);
+      ast_t *arg2 = eval_expr(v, args->cdr->car);
+
+      if ((arg1->type == AST_INT) && (arg2->type == AST_INT)) {
+        return init_ast_bool(arg1->int_value == arg2->int_value);
+      } else if ((arg1->type == AST_INT) && (arg2->type == AST_FLOAT)) {
+        return init_ast_bool(arg1->int_value == arg2->float_value);
+      } else if ((arg1->type == AST_FLOAT) && (arg2->type == AST_INT)) {
+        return init_ast_bool(arg1->float_value == arg2->int_value);
+      } else if ((arg1->type == AST_FLOAT) && (arg2->type) == AST_FLOAT) {
+        return init_ast_bool(arg1->float_value == arg2->float_value);
+      } else
+        eval_error(v, e);
+    } else if (strcmp(function->string_value, ">") == 0) {
+      if (cmp != 2)
+        eval_error(v, e);
+
+      ast_t *arg1 = eval_expr(v, args->car);
+      ast_t *arg2 = eval_expr(v, args->cdr->car);
+
+      if ((arg1->type == AST_INT) && (arg2->type == AST_INT)) {
+        return init_ast_bool(arg1->int_value > arg2->int_value);
+      } else if ((arg1->type == AST_INT) && (arg2->type == AST_FLOAT)) {
+        return init_ast_bool(arg1->int_value > arg2->float_value);
+      } else if ((arg1->type == AST_FLOAT) && (arg2->type == AST_INT)) {
+        return init_ast_bool(arg1->float_value > arg2->int_value);
+      } else if ((arg1->type == AST_FLOAT) && (arg2->type) == AST_FLOAT) {
+        return init_ast_bool(arg1->float_value > arg2->float_value);
+      } else
+        eval_error(v, e);
+    } else if (strcmp(function->string_value, ">=") == 0) {
+      if (cmp != 2)
+        eval_error(v, e);
+
+      ast_t *arg1 = eval_expr(v, args->car);
+      ast_t *arg2 = eval_expr(v, args->cdr->car);
+
+      if ((arg1->type == AST_INT) && (arg2->type == AST_INT)) {
+        return init_ast_bool(arg1->int_value >= arg2->int_value);
+      } else if ((arg1->type == AST_INT) && (arg2->type == AST_FLOAT)) {
+        return init_ast_bool(arg1->int_value >= arg2->float_value);
+      } else if ((arg1->type == AST_FLOAT) && (arg2->type == AST_INT)) {
+        return init_ast_bool(arg1->float_value >= arg2->int_value);
+      } else if ((arg1->type == AST_FLOAT) && (arg2->type) == AST_FLOAT) {
+        return init_ast_bool(arg1->float_value >= arg2->float_value);
+      } else
+        eval_error(v, e);
+    } else if (strcmp(function->string_value, "<=") == 0) {
+      if (cmp != 2)
+        eval_error(v, e);
+
+      ast_t *arg1 = eval_expr(v, args->car);
+      ast_t *arg2 = eval_expr(v, args->cdr->car);
+
+      if ((arg1->type == AST_INT) && (arg2->type == AST_INT)) {
+        return init_ast_bool(arg1->int_value <= arg2->int_value);
+      } else if ((arg1->type == AST_INT) && (arg2->type == AST_FLOAT)) {
+        return init_ast_bool(arg1->int_value <= arg2->float_value);
+      } else if ((arg1->type == AST_FLOAT) && (arg2->type == AST_INT)) {
+        return init_ast_bool(arg1->float_value <= arg2->int_value);
+      } else if ((arg1->type == AST_FLOAT) && (arg2->type) == AST_FLOAT) {
+        return init_ast_bool(arg1->float_value <= arg2->float_value);
+      } else
+        eval_error(v, e);
+    } else if (strcmp(function->string_value, "cons") == 0) {
+      if (cmp != 2)
+        eval_error(v, e);
+
+      ast_t *arg1 = eval_expr(v, args->car);
+      ast_t *arg2 = eval_expr(v, args->cdr->car);
+      ast_t *ret = init_ast_pair(arg1, arg2);
+      return ret;
     }
   }
+
   /* printf("debug 2\n"); */
   /* NON BUILT-INS */
   /* Checking that the parameters are actually valid */
@@ -309,13 +412,10 @@ ast_t *eval_list(visitor_t *v, ast_t *e) {
   char *name;
   ast_t *evaled_arg;
   while (cur_arg->cdr != NULL && cur_arg_name->cdr != NULL) {
-    ast_type_print(cur_arg->car);
     name = cur_arg_name->car->string_value;
-    printf("name: %s\n", name);
     evaled_arg = eval_expr(v, cur_arg->car);
     /* printf("%f\n", evaled_arg->float_value); */
     hash_table_add(stack_frame, name, evaled_arg);
-    printf("after hash_add\n");
     cur_arg_name = cur_arg_name->cdr;
     cur_arg = cur_arg->cdr;
   }
@@ -330,7 +430,7 @@ ast_t *eval_expr(visitor_t *v, ast_t *e) {
   /* ast_type_print(e); */
   if (is_self_evaluating(e))
     return e;
-  else if (e->type == AST_PAIR)
+  else if (e->type == AST_PAIR && is_proper_list(e))
     return eval_list(v, e);
   else if (e->type == AST_SYMBOL)
     return eval_symbol(v, e);

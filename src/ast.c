@@ -84,3 +84,13 @@ void ast_type_print(ast_t *e) {
     printf("Root Node\n");
   }
 }
+
+bool is_proper_list(ast_t *e) {
+  ast_t *cur = e;
+  while (cur->cdr != NULL) {
+    cur = cur->cdr;
+  }
+  if (cur->type == AST_PAIR && cur->car == NULL)
+    return true;
+  return false;
+}

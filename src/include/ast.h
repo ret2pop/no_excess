@@ -52,4 +52,6 @@ ast_t *init_ast_function(ast_t *car, ast_t *cdr);
 ast_t *init_ast_root(ast_t **subnodes, int size);
 
 void ast_type_print(ast_t *e);
+
+bool is_proper_list(ast_t *e);
 #endif

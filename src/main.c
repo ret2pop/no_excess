@@ -98,9 +98,9 @@ int main(int argc, char **argv) {
   /* ast_t *root = eval(visitor); */
   /* ast_t *res = root->subnodes[0]; */
   /* print(res); */
-  /* TODO: TEST NON-BUILTIN FUNCTIONS (stack frame) */
 
-  lexer_t *lexer = init_lexer("((lambda (x y) (+ x y)) (+ 3.0 4.0) 4)");
+  /* DONE: TEST NON-BUILTIN FUNCTIONS (stack frame) */
+  lexer_t *lexer = init_lexer("((lambda (x y) (+ x y)) (+ 3 4) 4)");
   parser_t *parser = init_parser(lexer);
   visitor_t *visitor = init_visitor(parser);
 
