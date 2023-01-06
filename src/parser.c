@@ -129,13 +129,14 @@ void parse_bind(parser_t *parser) {
     parser_error(parser);
   token_t *t = parser->tokens[parser->i];
   char *name = t->value;
+  printf("%s\n", name);
   parser_move(parser);
   ast_t *expr = parse_expr(parser); /* unevaluated expr will be evaluated when
                                        hash table transfers to visitor JIT */
   if (expr == NULL)
     parser_error(parser);
   hash_table_add(parser->symbol_table, name, expr);
-
+  printf("after add\n");
   if (parser->tokens[parser->i]->type != TOKEN_RPAREN)
     parser_error(parser);
 
@@ -153,6 +154,7 @@ ast_t *parse_list(parser_t *parser) {
   while (current_token->type != TOKEN_RPAREN) {
     if (current_token->type == TOKEN_ID) {
       if (strcmp(current_token->value, "lambda") == 0 && first_entry) {
+        printf("lambda here\n");
         return parse_function(parser);
       } else if (strcmp(current_token->value, "bind") == 0 && first_entry) {
         parse_bind(parser);
@@ -221,6 +223,7 @@ ast_t *parse_all(parser_t *parser) {
   while (t != NULL) {
     cur = parse_expr(parser);
     if (cur == NULL) {
+      printf("this is happening\n");
       t = parser->tokens[parser->i];
       continue;
     }

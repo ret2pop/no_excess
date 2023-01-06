@@ -35,38 +35,55 @@ sl_list_t *init_sl_list() {
 }
 
 /* TODO: fix segfault bug */
+/* void sl_list_add(sl_list_t *l, char *key, ast_t *value) { */
+/*   sl_node_t *cur = l->head; */
+/*   bool modified = false; */
+/*   if (l->head == NULL) { */
+/*     l->head = init_sl_node(key, value); */
+/*     l->size++; */
+/*     return; */
+/*   } */
+
+/*   for (int i = 0; i < l->size - 1; i++) { */
+/*     if (strcmp(cur->value->key, key) == 0) { */
+/*       cur->value->value = value; */
+/*       modified = true; */
+/*       break; */
+/*     } */
+/*     cur = cur->next; */
+/*   } */
+
+/*   if (strcmp(cur->value->key, key) == 0) { */
+/*     cur->value->value = value; */
+/*     modified = true; */
+/*   } */
+
+/*   if (!modified) { */
+/*     cur->next = init_sl_node(key, value); */
+/*     l->size++; */
+/*   } */
+/* } */
+
 void sl_list_add(sl_list_t *l, char *key, ast_t *value) {
+  printf("sl list add %s\n", key);
   sl_node_t *cur = l->head;
-  bool modified = false;
-  if (l->head == NULL) {
+  if (cur == NULL) {
     l->head = init_sl_node(key, value);
     l->size++;
-    return;
-  }
-
-  for (int i = 0; i < l->size - 1; i++) {
-    if (strcmp(cur->value->key, key) == 0) {
-      cur->value->value = value;
-      modified = true;
-      break;
+  } else {
+    while (cur->next != NULL) {
+      cur = cur->next;
     }
-    cur = cur->next;
-  }
-
-  if (strcmp(cur->value->key, key) == 0) {
-    cur->value->value = value;
-    modified = true;
-  }
-
-  if (!modified) {
     cur->next = init_sl_node(key, value);
+    printf("sl list cur->next %s\n", cur->next->value->key);
     l->size++;
   }
 }
-
 ast_t *sl_list_get(sl_list_t *l, char *key) {
   sl_node_t *cur = l->head;
   for (int i = 0; i < l->size; i++) {
+    if (cur == NULL)
+      return NULL;
     if (strcmp(cur->value->key, key) == 0)
       return cur->value->value;
     cur = cur->next;
@@ -97,7 +114,7 @@ hash_table_t *init_hash_table(int size) {
   if (h == NULL)
     die("malloc on hash table");
   h->size = size;
-  h->buckets = malloc(sizeof(sl_list_t *));
+  h->buckets = malloc(size * sizeof(sl_list_t *));
   if (h->buckets == NULL)
     die("malloc on buckets");
   for (int i = 0; i < h->size; i++)
@@ -106,6 +123,7 @@ hash_table_t *init_hash_table(int size) {
 }
 
 void hash_table_add(hash_table_t *h, char *key, ast_t *value) {
+  printf("entering here? %s\n", key);
   sl_list_t *l = h->buckets[hash(key, h->size)];
   sl_list_add(l, key, value);
 }
@@ -116,6 +134,7 @@ ast_t *hash_table_get(hash_table_t *h, char *key) {
 }
 
 bool hash_table_exists(hash_table_t *h, char *key) {
+  printf("entering here? %s\n", key);
   sl_list_t *l = h->buckets[hash(key, h->size)];
   return sl_list_exists(l, key);
 }
