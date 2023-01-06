@@ -21,28 +21,6 @@ int main(int argc, char **argv) {
   /*   t = lexer_collect_next(lexer); */
   /* } */
 
-  /* TODO: TEST REPL POSSIBILITY */
-  /* printf("Welcome to the NXS REPL.\n"); */
-
-  /* char *buf = malloc(2); */
-  /* size_t size = 2; */
-  /* lexer_t *lexer; */
-  /* lexer = init_lexer("a"); */
-  /* token_t *t; */
-  /* while (true) { */
-  /*   printf("> "); */
-  /*   fflush(stdout); */
-  /*   getline(&buf, &size, stdin); */
-  /*   strcat(buf, "\0"); */
-  /*   lexer_reset(lexer, buf); */
-  /*   t = lexer_collect_next(lexer); */
-  /*   while (!lexer->finished) { */
-  /*     printf("%d\t%s\n", t->type, t->value); */
-  /*     t = lexer_collect_next(lexer); */
-  /*     printf("lmao\n"); */
-  /*   } */
-  /* } */
-
   /* DONE: TEST PARSER, VISITOR, PRINTER (self evaluating types) */
   /* lexer_t *lexer = init_lexer("\"hello world\""); */
   /* parser_t *parser = init_parser(lexer); */
@@ -107,6 +85,20 @@ int main(int argc, char **argv) {
   ast_t *root = eval(visitor);
   ast_t *res = root->subnodes[0];
   print(res);
+
+  /* TODO: TEST REPL POSSIBILITY */
+  /* printf("Welcome to the NXS REPL.\n"); */
+
+  /* char *buf = malloc(2); */
+  /* size_t size = 2; */
+  /* lexer_t *lexer; */
+  /* lexer = init_lexer("a"); */
+  /* while (true) { */
+  /*   printf("> "); */
+  /*   fflush(stdout); */
+  /*   getline(&buf, &size, stdin); */
+  /*   lexer_reset(lexer, buf); */
+  /* } */
 
   return 0;
 }

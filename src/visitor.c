@@ -194,7 +194,7 @@ ast_t *eval_list(visitor_t *v, ast_t *e) {
 
       ast_t *arg1 = eval_expr(v, args->car);
 
-      if ((arg1->type == AST_PAIR)) {
+      if (arg1->type == AST_PAIR) {
         return arg1->car;
       } else
         eval_error(v, e);
@@ -209,7 +209,7 @@ ast_t *eval_list(visitor_t *v, ast_t *e) {
 
       ast_t *arg1 = eval_expr(v, args->car);
 
-      if ((arg1->type == AST_STRING)) {
+      if (arg1->type == AST_STRING) {
         return init_ast_int(strlen(arg1->string_value));
       } else
         eval_error(v, e);
@@ -219,7 +219,7 @@ ast_t *eval_list(visitor_t *v, ast_t *e) {
 
       ast_t *arg1 = eval_expr(v, args->car);
 
-      if ((arg1->type == AST_BOOL)) {
+      if (arg1->type == AST_BOOL) {
         return init_ast_bool(true);
       } else
         return init_ast_bool(false);
@@ -229,7 +229,7 @@ ast_t *eval_list(visitor_t *v, ast_t *e) {
 
       ast_t *arg1 = eval_expr(v, args->car);
 
-      if ((arg1->type == AST_INT)) {
+      if (arg1->type == AST_INT) {
         return init_ast_bool(true);
       } else
         return init_ast_bool(false);
@@ -239,7 +239,7 @@ ast_t *eval_list(visitor_t *v, ast_t *e) {
 
       ast_t *arg1 = eval_expr(v, args->car);
 
-      if ((arg1->type == AST_FLOAT)) {
+      if (arg1->type == AST_FLOAT) {
         return init_ast_bool(true);
       } else
         return init_ast_bool(false);
@@ -249,7 +249,7 @@ ast_t *eval_list(visitor_t *v, ast_t *e) {
 
       ast_t *arg1 = eval_expr(v, args->car);
 
-      if ((arg1->type == AST_SYMBOL)) {
+      if (arg1->type == AST_SYMBOL) {
         return init_ast_bool(true);
       } else
         return init_ast_bool(false);
@@ -259,7 +259,7 @@ ast_t *eval_list(visitor_t *v, ast_t *e) {
 
       ast_t *arg1 = eval_expr(v, args->car);
 
-      if ((arg1->type == AST_FUNCTION)) {
+      if (arg1->type == AST_FUNCTION) {
         return init_ast_bool(true);
       } else
         return init_ast_bool(false);
@@ -269,7 +269,7 @@ ast_t *eval_list(visitor_t *v, ast_t *e) {
 
       ast_t *arg1 = eval_expr(v, args->car);
 
-      if ((arg1->type == AST_PAIR)) {
+      if (arg1->type == AST_PAIR) {
         return init_ast_bool(true);
       } else
         return init_ast_bool(false);
@@ -279,7 +279,7 @@ ast_t *eval_list(visitor_t *v, ast_t *e) {
 
       ast_t *arg1 = eval_expr(v, args->car);
 
-      if ((arg1->type == AST_STRING)) {
+      if (arg1->type == AST_STRING) {
         int a = atoi(arg1->string_value);
         return init_ast_int(a);
       } else
@@ -436,6 +436,7 @@ ast_t *eval_expr(visitor_t *v, ast_t *e) {
     return eval_symbol(v, e);
   else {
     eval_error(v, e);
+    return NULL;
   }
 }
 
