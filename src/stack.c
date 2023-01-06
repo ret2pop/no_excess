@@ -25,7 +25,11 @@ void stack_push(stack_t *s, hash_table_t *h) {
   s->stack[s->cur] = h;
 }
 
-hash_table_t *stack_peek(stack_t *s) { return s->stack[s->cur]; }
+hash_table_t *stack_peek(stack_t *s) {
+  if (s->stack == NULL)
+    return NULL;
+  return s->stack[s->cur];
+}
 
 hash_table_t *stack_pop(stack_t *s) {
   hash_table_t *h = s->stack[s->cur];

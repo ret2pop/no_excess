@@ -78,13 +78,14 @@ int main(int argc, char **argv) {
   /* print(res); */
 
   /* DONE: TEST NON-BUILTIN FUNCTIONS (stack frame) */
-  lexer_t *lexer = init_lexer("((lambda (x y) (+ x y)) (+ 3 4) 4)");
+  lexer_t *lexer = init_lexer(
+      "(bind hello 3) ((lambda (x y) (+ x y)) (+ hello 4) 4) (+ 3 4)");
   parser_t *parser = init_parser(lexer);
   visitor_t *visitor = init_visitor(parser);
-
   ast_t *root = eval(visitor);
-  ast_t *res = root->subnodes[0];
-  print(res);
+  print_root(root);
+  /* ast_t *res = root->subnodes[0]; */
+  /* print(res); */
 
   /* TODO: TEST REPL POSSIBILITY */
   /* printf("Welcome to the NXS REPL.\n"); */

@@ -6,7 +6,7 @@
 #include "./stack.h"
 
 typedef struct {
-  hash_table_t *symbol_table;
+  parser_t *p;
   hash_table_t *eval_table;
   stack_t *stack_frame;
   ast_t *root;

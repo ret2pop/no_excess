@@ -14,7 +14,7 @@ parser_t *init_parser(lexer_t *lexer) {
 
   p->i = 0;
   p->tokens = malloc(sizeof(token_t *));
-  p->symbol_table = init_hash_table(400);
+  p->symbol_table = init_hash_table(100);
   p->finished = false;
   if (p->tokens == NULL)
     die("malloc on p->tokens");
@@ -132,7 +132,8 @@ void parse_bind(parser_t *parser) {
   parser_move(parser);
   ast_t *expr = parse_expr(parser); /* unevaluated expr will be evaluated when
                                        hash table transfers to visitor JIT */
-
+  if (expr == NULL)
+    parser_error(parser);
   hash_table_add(parser->symbol_table, name, expr);
 
   if (parser->tokens[parser->i]->type != TOKEN_RPAREN)

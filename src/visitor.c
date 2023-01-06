@@ -11,9 +11,9 @@ visitor_t *init_visitor(parser_t *p) {
   visitor_t *v = (visitor_t *)malloc(sizeof(visitor_t));
   if (v == NULL)
     die("malloc on visitor");
+  v->p = p;
   v->stack_frame = init_stack();
-  v->symbol_table = p->symbol_table;
-  v->eval_table = init_hash_table(1000);
+  v->eval_table = init_hash_table(100);
   v->root = parse_all(p);
   return v;
 }
@@ -67,24 +67,28 @@ bool is_built_in(ast_t *e) {
  * =, equal (for strings), input */
 ast_t *eval_symbol(visitor_t *v, ast_t *e) {
   /* hash_table_t *lmao = stack_peek(v->stack_frame); */
+  hash_table_t *h = stack_peek(v->stack_frame);
+
   if (is_built_in(e))
     return e;
   /* first, it looks in the stack frame for a variable */
-  else if (hash_table_exists(stack_peek(v->stack_frame), e->string_value))
+  else if (h != NULL && hash_table_exists(h, e->string_value)) {
     return hash_table_get(stack_peek(v->stack_frame), e->string_value);
+  }
   /* Then the variables that have already been evaluated */
-  else if (hash_table_exists(v->eval_table, e->string_value))
+  else if (hash_table_exists(v->eval_table, e->string_value)) {
     return hash_table_get(v->eval_table, e->string_value);
-
+  }
   /* then it goes into the symbol table, evaluates the variable if it finds it
    * and puts it in the list of variables that have already been evaluated */
-  else if (hash_table_exists(v->symbol_table, e->string_value)) {
-    ast_t *unevaled = hash_table_get(v->symbol_table, e->string_value);
+  else if (hash_table_exists(v->p->symbol_table, e->string_value)) {
+    ast_t *unevaled = hash_table_get(v->p->symbol_table, e->string_value);
     ast_t *eval = eval_expr(v, unevaled);
     hash_table_add(v->eval_table, e->string_value, eval);
     return eval;
   } else {
     eval_error(v, e);
+    return NULL;
   }
 }
 
@@ -427,7 +431,6 @@ ast_t *eval_list(visitor_t *v, ast_t *e) {
 }
 
 ast_t *eval_expr(visitor_t *v, ast_t *e) {
-  /* ast_type_print(e); */
   if (is_self_evaluating(e))
     return e;
   else if (e->type == AST_PAIR && is_proper_list(e))
