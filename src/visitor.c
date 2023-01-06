@@ -67,7 +67,6 @@ bool is_built_in(ast_t *e) {
  * =, equal (for strings), input */
 ast_t *eval_symbol(visitor_t *v, ast_t *e) {
   /* hash_table_t *lmao = stack_peek(v->stack_frame); */
-  printf("symbol\n");
   printf("%s\n", e->string_value);
   hash_table_t *h = stack_peek(v->stack_frame);
   if (is_built_in(e))
@@ -88,6 +87,7 @@ ast_t *eval_symbol(visitor_t *v, ast_t *e) {
     hash_table_add(v->eval_table, e->string_value, eval);
     return eval;
   } else {
+    printf("symbol error\n");
     eval_error(v, e);
     return NULL;
   }
@@ -294,13 +294,14 @@ ast_t *eval_list(visitor_t *v, ast_t *e) {
         eval_error(v, e);
 
       ast_t *arg1 = eval_expr(v, args->car);
-      ast_t *arg2 = eval_expr(v, args->cdr->car);
-      ast_t *arg3 = eval_expr(v, args->cdr->cdr->car);
       if (arg1->type == AST_BOOL) {
-        if (arg1->bool_value)
+        if (arg1->bool_value) {
+          ast_t *arg2 = eval_expr(v, args->cdr->car);
           return arg2;
-        else
+        } else {
+          ast_t *arg3 = eval_expr(v, args->cdr->cdr->car);
           return arg3;
+        }
       } else
         eval_error(v, e);
     } else if (strcmp(function->string_value, "<") == 0) {
@@ -432,6 +433,7 @@ ast_t *eval_list(visitor_t *v, ast_t *e) {
 }
 
 ast_t *eval_expr(visitor_t *v, ast_t *e) {
+  ast_type_print(e);
   if (is_self_evaluating(e))
     return e;
   else if (e->type == AST_PAIR && is_proper_list(e))
@@ -439,6 +441,7 @@ ast_t *eval_expr(visitor_t *v, ast_t *e) {
   else if (e->type == AST_SYMBOL)
     return eval_symbol(v, e);
   else {
+    printf("eval error\n");
     eval_error(v, e);
     return NULL;
   }
