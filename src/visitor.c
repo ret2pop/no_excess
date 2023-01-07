@@ -2,6 +2,7 @@
 #include "./include/hash_table.h"
 #include "./include/macros.h"
 #include "./include/parser.h"
+#include "./include/print.h"
 #include "./include/stack.h"
 #include <stdbool.h>
 #include <stdlib.h>
@@ -445,15 +446,7 @@ ast_t *eval_list(visitor_t *v, ast_t *e) {
         eval_error(v, e);
 
       ast_t *arg1 = eval_expr(v, args->car);
-      if (arg1->type == AST_STRING) {
-        printf("%s\n", arg1->string_value);
-      } else if (arg1->type == AST_INT) {
-        printf("%d\n", arg1->int_value);
-      } else if (arg1->type == AST_FLOAT) {
-        printf("%f\n", arg1->float_value);
-      } else {
-        printf("print statement for this datatype not implemented.\n");
-      }
+      print(arg1);
       return arg1;
     }
 
