@@ -131,6 +131,7 @@ int main(int argc, char **argv) {
     printf("TOO FEW ARGUMENTS.\n");
     exit(1);
   }
+
   char *filename = argv[1];
   char *buffer = 0;
   long length;
@@ -148,6 +149,12 @@ int main(int argc, char **argv) {
   }
 
   if (buffer) {
+    /* lexer_t *lexer = init_lexer(buffer); */
+    /* token_t *t = lexer_collect_next(lexer); */
+    /* while (t != NULL) { */
+    /*   printf("%d: %s\n", t->type, t->value); */
+    /*   t = lexer_collect_next(lexer); */
+    /* } */
     /* printf("%s", buffer); */
     lexer_t *lexer = init_lexer(buffer);
     parser_t *parser = init_parser(lexer);

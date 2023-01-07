@@ -123,18 +123,20 @@ static token_t *lexer_move_with(lexer_t *lexer, token_t *token) {
 }
 
 token_t *lexer_collect_next(lexer_t *lexer) {
+start:
   if (lexer->c == '\0' || lexer->c == EOF) {
     lexer->finished = true;
     return NULL;
   }
-
   if (isspace(lexer->c)) {
     lexer_ignore_whitespace(lexer);
+    goto start;
   }
-  if (lexer->c == '\0' || lexer->c == EOF) {
-    lexer->finished = true;
-    return NULL;
+  if (lexer->c == ';') {
+    lexer_skip_comment(lexer);
+    goto start;
   }
+
   if (isdigit(lexer->c))
     return lexer_collect_num(lexer);
   else if (is_valid_id_char(lexer->c))

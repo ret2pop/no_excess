@@ -397,6 +397,34 @@ ast_t *eval_list(visitor_t *v, ast_t *e) {
       ast_t *arg2 = eval_expr(v, args->cdr->car);
       ast_t *ret = init_ast_pair(arg1, arg2);
       return ret;
+    } else if (strcmp(function->string_value, "eq") == 0) {
+      if (cmp != 2)
+        eval_error(v, e);
+
+      ast_t *arg1 = eval_expr(v, args->car);
+      ast_t *arg2 = eval_expr(v, args->cdr->car);
+
+      if ((arg1->type == AST_STRING) && (arg2->type == AST_STRING)) {
+        return init_ast_bool(strcmp(arg1->string_value, arg2->string_value) ==
+                             0);
+      } else
+        eval_error(v, e);
+    } else if (strcmp(function->string_value, "concat") == 0) {
+      if (cmp != 2)
+        eval_error(v, e);
+
+      ast_t *arg1 = eval_expr(v, args->car);
+      ast_t *arg2 = eval_expr(v, args->cdr->car);
+
+      if ((arg1->type == AST_STRING) && (arg2->type == AST_STRING)) {
+        int string_len1 = strlen(arg1->string_value);
+        int string_len2 = strlen(arg2->string_value);
+        char *ret = malloc((string_len1 + string_len2) * sizeof(char));
+        strcat(ret, arg1->string_value);
+        strcat(ret, arg2->string_value);
+        return ret;
+      } else
+        eval_error(v, e);
     }
   }
 
