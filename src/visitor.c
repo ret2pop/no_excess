@@ -60,6 +60,10 @@ bool is_built_in(ast_t *e) {
       strcmp(cmp, "atof") == 0 || strcmp(cmp, "ftoa") == 0)
     return true;
 
+  /* I/O and other operating system stuff */
+  if (strcmp(cmp, "exit") == 0 || strcmp(cmp, "readin") == 0 ||
+      strcmp(cmp, "read") == 0)
+    return true;
   return false;
 }
 
@@ -422,10 +426,22 @@ ast_t *eval_list(visitor_t *v, ast_t *e) {
         char *ret = malloc((string_len1 + string_len2) * sizeof(char));
         strcat(ret, arg1->string_value);
         strcat(ret, arg2->string_value);
-        return ret;
+        return init_ast_string(ret);
+      } else
+        eval_error(v, e);
+    } else if (strcmp(function->string_value, "exit") == 0) {
+      if (cmp != 1)
+        eval_error(v, e);
+
+      ast_t *arg1 = eval_expr(v, args->car);
+
+      if (arg1->type == AST_INT) {
+        int code = arg1->int_value;
+        exit(code);
       } else
         eval_error(v, e);
     }
+    return NULL;
   }
 
   /* printf("debug 2\n"); */

@@ -1,4 +1,8 @@
 ;; Author: Andrei S
 (bind fib (lambda (x) ;; xth fib number
-(if (< x 2) x (+ (fib (- x 1)) (fib (- x 2))))))
+	(if (< x 2) x (+ (fib (- x 1)) (fib (- x 2))))))
+
 (fib 7)
+
+(bind fibseq (lambda (n)
+(if (= 0 n) 0 (begin (+ n 1) (fib n)))))

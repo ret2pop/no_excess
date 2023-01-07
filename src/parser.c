@@ -133,12 +133,16 @@ void parse_bind(parser_t *parser) {
                                        hash table transfers to visitor JIT */
   if (expr == NULL)
     parser_error(parser);
+  if (expr->type == AST_ROOT)
+    parser_error(parser);
   hash_table_add(parser->symbol_table, name, expr);
   if (parser->tokens[parser->i]->type != TOKEN_RPAREN)
     parser_error(parser);
 
   parser_move(parser);
 }
+
+ast_t *parse_include(parser_t *parser) { parser_eat(parser, TOKEN_STRING); }
 
 ast_t *parse_list(parser_t *parser) {
   ast_t *car;
@@ -162,6 +166,8 @@ ast_t *parse_list(parser_t *parser) {
       car = parse_expr(parser);
       if (car == NULL)
         parser_error(parser);
+      if (car->type == AST_ROOT)
+        parser_error(parser);
     }
     cur->car = car;
     cur->cdr = init_ast_pair(NULL, NULL);
@@ -178,6 +184,8 @@ ast_t *parse_quote(parser_t *parser) {
   ast_t *car = init_ast_symbol("quote");
   ast_t *expr = parse_expr(parser);
   if (expr == NULL)
+    parser_error(parser);
+  if (expr->type == AST_ROOT)
     parser_error(parser);
   ast_t *ret = init_ast_pair(
       car, init_ast_pair(
