@@ -7,14 +7,14 @@
 #include <stdlib.h>
 #include <string.h>
 
-parser_t *init_parser(lexer_t *lexer) {
+parser_t *init_parser_copy_hash(lexer_t *lexer, hash_table_t *h) {
   parser_t *p = (parser_t *)malloc(sizeof(parser_t));
   if (p == NULL)
     die("malloc on parser");
 
   p->i = 0;
   p->tokens = malloc(sizeof(token_t *));
-  p->symbol_table = init_hash_table(100);
+  p->symbol_table = h;
   p->finished = false;
   if (p->tokens == NULL)
     die("malloc on p->tokens");
@@ -34,6 +34,36 @@ parser_t *init_parser(lexer_t *lexer) {
   p->size = size;
   return p;
 }
+parser_t *init_parser(lexer_t *lexer) {
+  return init_parser_copy_hash(lexer, init_hash_table(100));
+}
+/* parser_t *init_parser(lexer_t *lexer) { */
+/*   parser_t *p = (parser_t *)malloc(sizeof(parser_t)); */
+/*   if (p == NULL) */
+/*     die("malloc on parser"); */
+
+/*   p->i = 0; */
+/*   p->tokens = malloc(sizeof(token_t *)); */
+/*   p->symbol_table = init_hash_table(100); */
+/*   p->finished = false; */
+/*   if (p->tokens == NULL) */
+/*     die("malloc on p->tokens"); */
+
+/*   int size = 1; */
+/*   token_t *t = lexer_collect_next(lexer); */
+/*   p->tokens[size - 1] = t; */
+
+/*   while (true) { */
+/*     t = lexer_collect_next(lexer); */
+/*     size++; */
+/*     p->tokens = realloc(p->tokens, size * sizeof(token_t *)); */
+/*     p->tokens[size - 1] = t; */
+/*     if (t == NULL) */
+/*       break; */
+/*   } */
+/*   p->size = size; */
+/*   return p; */
+/* } */
 
 void parser_move(parser_t *parser) {
   if (parser->i != parser->size - 1)
@@ -142,7 +172,41 @@ void parse_bind(parser_t *parser) {
   parser_move(parser);
 }
 
-ast_t *parse_include(parser_t *parser) { parser_eat(parser, TOKEN_STRING); }
+ast_t *parse_include(parser_t *parser) {
+  parser_move(parser);
+  if (parser->tokens[parser->i]->type != TOKEN_STRING)
+    parser_error(parser);
+  char *filename = parser->tokens[parser->i]->value;
+  char *buffer = 0;
+  long length;
+  FILE *f = fopen(filename, "rb");
+
+  if (f) {
+    fseek(f, 0, SEEK_END);
+    length = ftell(f);
+    fseek(f, 0, SEEK_SET);
+    buffer = malloc(length);
+    if (buffer) {
+      fread(buffer, 1, length, f);
+    }
+    fclose(f);
+  } else {
+    parser_error(parser);
+  }
+  if (buffer) {
+    lexer_t *lexer = init_lexer(buffer);
+    parser_t *p = init_parser_copy_hash(lexer, parser->symbol_table);
+    ast_t *root = parse_all(p);
+    parser_move(parser);
+    if (parser->tokens[parser->i]->type != TOKEN_RPAREN)
+      parser_error(parser);
+    parser_move(parser);
+    return root;
+  } else {
+    parser_error(parser);
+  }
+  return NULL;
+}
 
 ast_t *parse_list(parser_t *parser) {
   ast_t *car;
@@ -159,6 +223,8 @@ ast_t *parse_list(parser_t *parser) {
       } else if (strcmp(current_token->value, "bind") == 0 && first_entry) {
         parse_bind(parser);
         return NULL;
+      } else if (strcmp(current_token->value, "include") == 0 && first_entry) {
+        return parse_include(parser);
       } else {
         car = parse_symbol(parser);
       }
@@ -226,6 +292,14 @@ ast_t *parse_all(parser_t *parser) {
   while (t != NULL) {
     cur = parse_expr(parser);
     if (cur == NULL) {
+      t = parser->tokens[parser->i];
+      continue;
+    } else if (cur->type == AST_ROOT) {
+      for (int j = 0; j < cur->root_size; j++) {
+        i++;
+        asts = realloc(asts, i * sizeof(ast_t *));
+        asts[i - 1] = cur->subnodes[j];
+      }
       t = parser->tokens[parser->i];
       continue;
     }

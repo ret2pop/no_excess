@@ -131,6 +131,10 @@ int main(int argc, char **argv) {
     printf("TOO FEW ARGUMENTS.\n");
     exit(1);
   }
+  if (strcmp(argv[1], "-v") == 0 || strcmp(argv[1], "--version") == 0) {
+    printf("nxs, version 1.0.0 alpha\n");
+    exit(0);
+  }
 
   char *filename = argv[1];
   char *buffer = 0;

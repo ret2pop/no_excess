@@ -77,6 +77,7 @@ void sl_list_add(sl_list_t *l, char *key, ast_t *value) {
     l->size++;
   }
 }
+
 ast_t *sl_list_get(sl_list_t *l, char *key) {
   sl_node_t *cur = l->head;
   for (int i = 0; i < l->size; i++) {
