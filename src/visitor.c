@@ -62,7 +62,7 @@ bool is_built_in(ast_t *e) {
 
   /* I/O and other operating system stuff */
   if (strcmp(cmp, "exit") == 0 || strcmp(cmp, "readin") == 0 ||
-      strcmp(cmp, "read") == 0)
+      strcmp(cmp, "read") == 0 || strcmp(cmp, "print") == 0)
     return true;
   return false;
 }
@@ -440,7 +440,23 @@ ast_t *eval_list(visitor_t *v, ast_t *e) {
         exit(code);
       } else
         eval_error(v, e);
+    } else if (strcmp(function->string_value, "print") == 0) {
+      if (cmp != 1)
+        eval_error(v, e);
+
+      ast_t *arg1 = eval_expr(v, args->car);
+      if (arg1->type == AST_STRING) {
+        printf("%s\n", arg1->string_value);
+      } else if (arg1->type == AST_INT) {
+        printf("%d\n", arg1->int_value);
+      } else if (arg1->type == AST_FLOAT) {
+        printf("%f\n", arg1->float_value);
+      } else {
+        printf("print statement for this datatype not implemented.\n");
+      }
+      return arg1;
     }
+
     return NULL;
   }
 
