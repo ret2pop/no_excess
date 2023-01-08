@@ -36,6 +36,8 @@ bool sl_list_exists(sl_list_t *l, char *key);
 
 void sl_list_free(sl_list_t *l);
 
+void sl_list_free_some(sl_list_t *l);
+
 hash_table_t *init_hash_table(int size);
 
 void hash_table_add(hash_table_t *h, char *key, ast_t *value);
@@ -48,4 +50,5 @@ unsigned long hash(char *key, int size);
 
 void hash_table_free(hash_table_t *h);
 
+void hash_table_free_some(hash_table_t *h);
 #endif

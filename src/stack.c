@@ -43,3 +43,10 @@ bool is_empty(stack_t *s) {
     return true;
   return false;
 }
+
+void stack_free(stack_t *s) {
+  if (s->stack != NULL) {
+    free(s->stack);
+  }
+  free(s);
+}

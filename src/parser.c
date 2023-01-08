@@ -7,6 +7,14 @@
 #include <stdlib.h>
 #include <string.h>
 
+void parser_reset(parser_t *parser, lexer_t *lexer) {
+  for (int i = 0; i < parser->size; i++) {
+    free(parser->tokens[i]);
+  }
+  parser->i = 0;
+  parser->finished = false;
+}
+
 parser_t *init_parser_copy_hash(lexer_t *lexer, hash_table_t *h) {
   parser_t *p = (parser_t *)malloc(sizeof(parser_t));
   if (p == NULL)
@@ -203,6 +211,10 @@ ast_t *parse_include(parser_t *parser) {
     if (parser->tokens[parser->i]->type != TOKEN_RPAREN)
       parser_error(parser);
     parser_move(parser);
+
+    free(lexer);
+    free(buffer);
+    parser_free(p);
     return root;
   } else {
     parser_error(parser);
@@ -316,4 +328,12 @@ ast_t *parse_all(parser_t *parser) {
 void parser_error(parser_t *parser) {
   printf("PARSER ERROR: something went wrong.\n");
   exit(1);
+}
+
+void parser_free(parser_t *parser) {
+  for (int i = 0; i < parser->size; i++) {
+    free(parser->tokens[i]);
+  }
+  free(parser->tokens);
+  free(parser);
 }

@@ -15,4 +15,6 @@ hash_table_t *stack_peek(stack_t *s);
 hash_table_t *stack_pop(stack_t *s);
 
 bool is_empty(stack_t *s);
+
+void stack_free(stack_t *s);
 #endif

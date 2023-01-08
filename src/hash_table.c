@@ -24,6 +24,11 @@ sl_node_t *init_sl_node(char *key, ast_t *value) {
   return n;
 }
 
+void sl_node_free(sl_node_t *n) {
+  ast_free(n->value->value);
+  free(n->value);
+  free(n);
+}
 /*** SINGLY LINKED LIST FUNCTIONS ***/
 sl_list_t *init_sl_list() {
   sl_list_t *l = (sl_list_t *)malloc(sizeof(sl_list_t));
@@ -108,14 +113,24 @@ bool sl_list_exists(sl_list_t *l, char *key) {
 void sl_list_free(sl_list_t *l) {
   sl_node_t *cur = l->head;
   sl_node_t *tmp;
-  for (int i = 0; i < l->size; i++) {
+  while (cur != NULL) {
     tmp = cur;
-    cur = cur->next;
-    free(tmp);
+    cur = tmp->next;
+    sl_node_free(tmp);
   }
   free(l);
 }
 
+void sl_list_free_some(sl_list_t *l) {
+  sl_node_t *cur = l->head;
+  sl_node_t *tmp;
+  while (cur != NULL) {
+    tmp = cur;
+    cur = tmp->next;
+    free(tmp);
+  }
+  free(l);
+}
 /*** HASH TABLE FUNCTIONS ***/
 hash_table_t *init_hash_table(int size) {
   hash_table_t *h = (hash_table_t *)malloc(sizeof(hash_table_t));
@@ -153,6 +168,11 @@ void hash_table_free(hash_table_t *h) {
   free(h);
 }
 
+void hash_table_free_some(hash_table_t *h) {
+  for (int i = 0; i < h->size; i++)
+    sl_list_free_some(h->buckets[i]);
+  free(h);
+}
 /* DJB2 HASH FUNCTION */
 unsigned long hash(char *key, int size) {
   unsigned long hash = 5381;

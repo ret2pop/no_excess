@@ -132,7 +132,9 @@ int main(int argc, char **argv) {
     printf("nxs, version 1.2 alpha\n");
     exit(0);
   } else if (strcmp(argv[1], "-r") == 0 || strcmp(argv[1], "--repl") == 0) {
-    /* Start a REPL */
+    printf("Welcome to the NoExcess REPL.\n");
+    while (true) {
+    }
   }
 
   char *filename = argv[1];
@@ -162,8 +164,14 @@ int main(int argc, char **argv) {
     lexer_t *lexer = init_lexer(buffer);
     parser_t *parser = init_parser(lexer);
     visitor_t *visitor = init_visitor(parser);
-    eval(visitor);
+    ast_t *root = eval(visitor);
     /* print_root(root); */
+    ast_free(root);
+    free(visitor);
+    hash_table_free(parser->symbol_table);
+    parser_free(parser);
+    free(lexer);
+    free(buffer);
   }
 
   return 0;

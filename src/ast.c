@@ -94,3 +94,20 @@ bool is_proper_list(ast_t *e) {
     return true;
   return false;
 }
+
+void ast_free(ast_t *e) {
+  if (e->cdr != NULL) {
+    ast_free(e->cdr);
+  }
+  if (e->car != NULL) {
+    ast_free(e->car);
+  }
+
+  if (e->type == AST_ROOT) {
+    for (int i = 0; i < e->root_size; i++) {
+      ast_free(e->subnodes[i]);
+    }
+  }
+
+  free(e);
+}

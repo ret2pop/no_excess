@@ -45,4 +45,6 @@ void parse_bind(parser_t *parser);
 ast_t *parse_expr(parser_t *parser);
 
 ast_t *parse_all(parser_t *parser);
+
+void parser_free(parser_t *parser);
 #endif

@@ -8,6 +8,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+void visitor_reset() {}
+
 visitor_t *init_visitor(parser_t *p) {
   visitor_t *v = (visitor_t *)malloc(sizeof(visitor_t));
   if (v == NULL)
@@ -535,8 +537,8 @@ ast_t *eval_list(visitor_t *v, ast_t *e) {
   }
   stack_push(v->stack_frame, stack_frame);
   ast_t *res = eval_expr(v, function->cdr);
-  stack_frame = stack_pop(v->stack_frame);
-  /* hash_table_free(stack_frame); */
+  stack_pop(v->stack_frame);
+  hash_table_free_some(stack_frame);
   return res;
 }
 
@@ -571,4 +573,11 @@ ast_t *eval(visitor_t *v) {
 void eval_error(visitor_t *v, ast_t *e) {
   printf("ERROR: something went wrong with the visitor.\n");
   exit(1);
+}
+
+void visitor_free(visitor_t *v) {
+  ast_free(v->root);
+  hash_table_free(v->eval_table);
+  stack_free(v->stack_frame);
+  free(v);
 }
