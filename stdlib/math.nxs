@@ -1,0 +1,20 @@
+;; some bootstrapping needed in order to obtain more complicated functions;
+;; the power series requires a factorial and integer power function
+(bind powi (lambda (x y)
+	(if (= y 1)
+	x
+	(* x (pow x (- y 1)))
+)))
+(bind factorial (lambda (n)
+        (if (= n 0) 1 (* n (factorial (print(- n 1)))))))
+
+;; complicated functions
+(bind exp (lambda (x) x))
+
+(bind ln (lambda (x) x))
+
+(bind sin (lambda (x) x))
+
+(bind cos (lambda (x) x))
+
+(bind tan (lambda (x) (/ (sin x) (cos x))))

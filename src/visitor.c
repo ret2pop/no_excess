@@ -449,6 +449,60 @@ ast_t *eval_list(visitor_t *v, ast_t *e) {
       print(arg1);
       printf("\n");
       return arg1;
+    } else if (strcmp(function->string_value, "read") == 0) {
+      if (cmp != 1)
+        eval_error(v, e);
+
+      ast_t *arg1 = eval_expr(v, args->car);
+      if (arg1->type == AST_STRING) {
+        char *buffer = 0;
+        long length;
+        FILE *f = fopen(arg1->string_value, "rb");
+
+        if (f) {
+          fseek(f, 0, SEEK_END);
+          length = ftell(f);
+          fseek(f, 0, SEEK_SET);
+          buffer = malloc(length);
+          if (buffer) {
+            fread(buffer, 1, length, f);
+          }
+          fclose(f);
+        } else {
+          eval_error(v, e);
+        }
+
+        if (buffer) {
+          return init_ast_string(buffer);
+        } else {
+          eval_error(v, e);
+        }
+      }
+    } else if (strcmp(function->string_value, "bound?") == 0) {
+      if (cmp != 1)
+        eval_error(v, e);
+
+      ast_t *arg1 = eval_expr(v, args->car);
+
+      if (arg1->type == AST_SYMBOL) {
+        if (hash_table_exists(v->p->symbol_table, arg1->string_value)) {
+          return init_ast_bool(true);
+        }
+        return init_ast_bool(false);
+      } else
+        eval_error(v, e);
+    } else if (strcmp(function->string_value, "at") == 0) {
+      if (cmp != 2)
+        eval_error(v, e);
+
+      ast_t *arg1 = eval_expr(v, args->car);
+      ast_t *arg2 = eval_expr(v, args->cdr->car);
+      if (arg1->type == AST_STRING && arg2->type == AST_INT &&
+          arg2->int_value < strlen(arg1->string_value)) {
+        return init_ast_string(
+            char_to_string(arg1->string_value[arg2->int_value]));
+      } else
+        eval_error(v, e);
     }
 
     return NULL;

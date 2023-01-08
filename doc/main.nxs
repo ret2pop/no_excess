@@ -1,8 +1,9 @@
 (include "fib.nxs")
 
 (bind factorial (lambda (n)
-	(if (= n 0) 1 (* n (factorial (print(- n 1)))))))
-(print(fib 7))
+	(if (= n 0) 1 (* n (factorial (- n 1))))))
+
+(print (fib 7))
 (print (+ (factorial 5) 10))
 
-(print(car (quote (+ (3 2) 4))))
+(print (quote (+ (3 2) 4)))

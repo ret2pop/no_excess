@@ -57,13 +57,6 @@ static bool is_valid_id_char(char c) {
   return true;
 }
 
-static char *char_to_string(char c) {
-  char *s = (char *)malloc(2 * sizeof(char));
-  s[0] = c;
-  s[1] = '\0';
-  return s;
-}
-
 token_t *lexer_collect_bool(lexer_t *lexer) {
   lexer_move(lexer);
   if (lexer->c == 't') {
@@ -158,7 +151,6 @@ start:
     return lexer_move_with(
         lexer, init_token(TOKEN_PERIOD, ".", lexer->row, lexer->col));
   else {
-    printf("returns null\n");
     return NULL;
   }
 }

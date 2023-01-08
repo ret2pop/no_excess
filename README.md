@@ -7,6 +7,9 @@ some built-in functions to make the language usable, though
 I plan to add support for macros and other stuff. This
 is a functional programming language so functions are first-class.
 
+I wrote this programming language within just six days, and I wrote
+the bulk of it (~1400 LoC) within the first two days.
+
 ## TODO
 Each todo here represents one task that I have not done.
 Note that all the tasks that I finished are bigger than

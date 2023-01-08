@@ -30,6 +30,7 @@ parser_t *init_parser_copy_hash(lexer_t *lexer, hash_table_t *h) {
     p->tokens[size - 1] = t;
     if (t == NULL)
       break;
+    /* printf("%d: %s\n", t->type, t->value); */
   }
   p->size = size;
   return p;
@@ -185,7 +186,7 @@ ast_t *parse_include(parser_t *parser) {
     fseek(f, 0, SEEK_END);
     length = ftell(f);
     fseek(f, 0, SEEK_SET);
-    buffer = malloc(length);
+    buffer = malloc(length + 1);
     if (buffer) {
       fread(buffer, 1, length, f);
     }
@@ -194,6 +195,7 @@ ast_t *parse_include(parser_t *parser) {
     parser_error(parser);
   }
   if (buffer) {
+    buffer[length] = '\0';
     lexer_t *lexer = init_lexer(buffer);
     parser_t *p = init_parser_copy_hash(lexer, parser->symbol_table);
     ast_t *root = parse_all(p);

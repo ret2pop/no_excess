@@ -82,4 +82,6 @@
 #define COLOR_RESET "\e[0m"
 
 void die(char *message);
+
+char *char_to_string(char c);
 #endif

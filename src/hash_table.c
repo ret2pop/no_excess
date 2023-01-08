@@ -78,6 +78,15 @@ void sl_list_add(sl_list_t *l, char *key, ast_t *value) {
   }
 }
 
+void sl_list_modify(sl_list_t *l, char *key, ast_t *value) {
+  sl_node_t *cur = l->head;
+  while (cur != NULL) {
+    if (strcmp(cur->value->key, key) == 0)
+      cur->value->value = value;
+    cur = cur->next;
+  }
+}
+
 ast_t *sl_list_get(sl_list_t *l, char *key) {
   sl_node_t *cur = l->head;
   for (int i = 0; i < l->size; i++) {
@@ -123,6 +132,8 @@ hash_table_t *init_hash_table(int size) {
 
 void hash_table_add(hash_table_t *h, char *key, ast_t *value) {
   sl_list_t *l = h->buckets[hash(key, h->size)];
+  if (sl_list_exists(l, key))
+    sl_list_modify(l, key, value);
   sl_list_add(l, key, value);
 }
 

@@ -12,9 +12,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-// Read the file into allocated memory.
-// Return NULL on error.
-
 int main(int argc, char **argv) {
   /* DONE: TEST LEXER */
   /* lexer_t *lexer = init_lexer("'(fasd asdf)"); */
@@ -134,6 +131,8 @@ int main(int argc, char **argv) {
   if (strcmp(argv[1], "-v") == 0 || strcmp(argv[1], "--version") == 0) {
     printf("nxs, version 1.2 alpha\n");
     exit(0);
+  } else if (strcmp(argv[1], "-r") == 0 || strcmp(argv[1], "--repl") == 0) {
+    /* Start a REPL */
   }
 
   char *filename = argv[1];
@@ -145,13 +144,13 @@ int main(int argc, char **argv) {
     fseek(f, 0, SEEK_END);
     length = ftell(f);
     fseek(f, 0, SEEK_SET);
-    buffer = malloc(length);
+    buffer = malloc(length + 1);
     if (buffer) {
       fread(buffer, 1, length, f);
     }
     fclose(f);
   }
-
+  buffer[length] = '\0';
   if (buffer) {
     /* lexer_t *lexer = init_lexer(buffer); */
     /* token_t *t = lexer_collect_next(lexer); */
@@ -163,7 +162,7 @@ int main(int argc, char **argv) {
     lexer_t *lexer = init_lexer(buffer);
     parser_t *parser = init_parser(lexer);
     visitor_t *visitor = init_visitor(parser);
-    ast_t *root = eval(visitor);
+    eval(visitor);
     /* print_root(root); */
   }
 
