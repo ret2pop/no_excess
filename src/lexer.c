@@ -26,7 +26,7 @@ lexer_t *init_lexer(char *source) {
 }
 
 void lexer_move(lexer_t *lexer) {
-  if (lexer->c != '\0') {
+  if (lexer->c != '\0' && lexer->c != EOF) {
     lexer->i++;
     lexer->c = lexer->source[lexer->i];
     if (lexer->c == '\n') {
@@ -39,7 +39,7 @@ void lexer_move(lexer_t *lexer) {
 
 void lexer_ignore_whitespace(lexer_t *lexer) {
   while (isspace(lexer->c)) {
-    if (lexer->c == '\0')
+    if (lexer->c == '\0' || lexer->c == EOF)
       return;
     lexer_move(lexer);
   }

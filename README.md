@@ -3,7 +3,7 @@ This is basically a scheme-like language that is aimed to
 be scheme with no additional fluff. The programming language
 is "done" now in the sense that it is turing complete and
 there are some features like strings, ints, floats, booleans, and
-some built-in functions to make he language usable, though
+some built-in functions to make the language usable, though
 I plan to add support for macros and other stuff. This
 is a functional programming language so functions are first-class.
 
@@ -14,7 +14,7 @@ the ones that I have not, and that is simply because I
 made this checklist after I did everything in the first
 checklist.
 
-Estimate: 90% done.
+Estimate: 95% done.
 
 ### DONE
 - [X] Write the lexer (easy)
@@ -22,13 +22,14 @@ Estimate: 90% done.
 - [X] Write hash table (medium)
 - [X] Write the visitor (hard)
 - [X] Write a few print functions (trivial)
+- [X] Write the print function for lists (trivial)
+- [X] Implement a primitive include system (easy-medium)
 
 ### NOT DONE
-- [ ] Write the print function for lists (trivial)
-- [ ] Implement macros (medium)
-- [ ] Implement a primitive include system (easy-medium)
 - [ ] Finish type conversion builtins (easy)
 - [ ] Finish read and write builtins (easy)
+- [ ] Make appealing frontend (easy)
+- [ ] Implement macros (medium)
 
 ### Wishlist
 - [ ] Maybe a garbage collector?
@@ -51,7 +52,7 @@ Programming in this language, you may find some differences from scheme. Here ar
 You may find actual code examples in `doc/`. Also, there will be more functionality than
 the above, but I have not implemented it yet. Some future ones are:
 
-8. The only side effects are printing evaluated expressions and writing to files with the `write` builtin.
+8. The only side effects are printing expressions with the `print` builtin and writing to files with the `write` builtin.
 9. You may define macros.
 10. Let's all have fun and play together!
 

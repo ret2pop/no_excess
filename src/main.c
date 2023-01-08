@@ -132,7 +132,7 @@ int main(int argc, char **argv) {
     exit(1);
   }
   if (strcmp(argv[1], "-v") == 0 || strcmp(argv[1], "--version") == 0) {
-    printf("nxs, version 1.0.0 alpha\n");
+    printf("nxs, version 1.2 alpha\n");
     exit(0);
   }
 

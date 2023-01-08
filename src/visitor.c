@@ -447,6 +447,7 @@ ast_t *eval_list(visitor_t *v, ast_t *e) {
 
       ast_t *arg1 = eval_expr(v, args->car);
       print(arg1);
+      printf("\n");
       return arg1;
     }
 
