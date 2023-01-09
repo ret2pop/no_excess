@@ -27,4 +27,6 @@ ast_t *eval_list(visitor_t *v, ast_t *e);
 ast_t *eval_expr(visitor_t *v, ast_t *e);
 
 ast_t *eval(visitor_t *v);
+
+void visitor_free(visitor_t *v);
 #endif

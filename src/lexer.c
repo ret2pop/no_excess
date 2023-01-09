@@ -72,10 +72,12 @@ token_t *lexer_collect_bool(lexer_t *lexer) {
 token_t *lexer_collect_id(lexer_t *lexer) {
   char *ret = (char *)malloc(1);
   ret[0] = '\0';
-
+  char merge[2];
+  merge[1] = '\0';
   while (is_valid_id_char(lexer->c)) {
     ret = realloc(ret, (strlen(ret) + 2));
-    strcat(ret, char_to_string(lexer->c));
+    merge[0] = lexer->c;
+    strcat(ret, merge);
     lexer_move(lexer);
   }
   return init_token(TOKEN_ID, ret, lexer->row, lexer->col);
@@ -85,11 +87,14 @@ token_t *lexer_collect_num(lexer_t *lexer) {
   char *ret = (char *)malloc(1);
   ret[0] = '\0';
   bool is_float = false;
+  char merge[2];
+  merge[1] = '\0';
   while (isdigit(lexer->c) || (lexer->c == '.' && !is_float)) {
     if (lexer->c == '.')
       is_float = true;
+    merge[0] = lexer->c;
     ret = realloc(ret, (strlen(ret) + 2));
-    strcat(ret, char_to_string(lexer->c));
+    strcat(ret, merge);
     lexer_move(lexer);
   }
   if (is_float)
@@ -100,10 +105,13 @@ token_t *lexer_collect_num(lexer_t *lexer) {
 token_t *lexer_collect_string(lexer_t *lexer) {
   char *ret = (char *)malloc(1);
   ret[0] = '\0';
+  char merge[2];
+  merge[1] = '\0';
   lexer_move(lexer);
   while (lexer->c != '"') {
     ret = realloc(ret, (strlen(ret) + 2));
-    strcat(ret, char_to_string(lexer->c));
+    merge[0] = lexer->c;
+    strcat(ret, merge);
     lexer_move(lexer);
   }
   lexer_move(lexer);

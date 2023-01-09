@@ -537,8 +537,8 @@ ast_t *eval_list(visitor_t *v, ast_t *e) {
   }
   stack_push(v->stack_frame, stack_frame);
   ast_t *res = eval_expr(v, function->cdr);
-  stack_pop(v->stack_frame);
-  hash_table_free_some(stack_frame);
+  hash_table_t *tmp = stack_pop(v->stack_frame);
+  hash_table_free_some(tmp);
   return res;
 }
 
@@ -576,8 +576,7 @@ void eval_error(visitor_t *v, ast_t *e) {
 }
 
 void visitor_free(visitor_t *v) {
-  ast_free(v->root);
-  hash_table_free(v->eval_table);
+  hash_table_free_some(v->eval_table);
   stack_free(v->stack_frame);
   free(v);
 }

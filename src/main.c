@@ -167,7 +167,8 @@ int main(int argc, char **argv) {
     ast_t *root = eval(visitor);
     /* print_root(root); */
     ast_free(root);
-    free(visitor);
+    ast_free(visitor->root);
+    visitor_free(visitor);
     hash_table_free(parser->symbol_table);
     parser_free(parser);
     free(lexer);

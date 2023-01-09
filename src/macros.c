@@ -10,8 +10,8 @@ void die(char *message) {
 }
 
 char *char_to_string(char c) {
-  char *s = malloc(2);
-  s[0] = c;
-  s[1] = '\0';
-  return s;
+  char *str = malloc(2);
+  str[0] = c;
+  str[1] = '\0';
+  return str;
 }

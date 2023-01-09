@@ -46,33 +46,6 @@ parser_t *init_parser_copy_hash(lexer_t *lexer, hash_table_t *h) {
 parser_t *init_parser(lexer_t *lexer) {
   return init_parser_copy_hash(lexer, init_hash_table(100));
 }
-/* parser_t *init_parser(lexer_t *lexer) { */
-/*   parser_t *p = (parser_t *)malloc(sizeof(parser_t)); */
-/*   if (p == NULL) */
-/*     die("malloc on parser"); */
-
-/*   p->i = 0; */
-/*   p->tokens = malloc(sizeof(token_t *)); */
-/*   p->symbol_table = init_hash_table(100); */
-/*   p->finished = false; */
-/*   if (p->tokens == NULL) */
-/*     die("malloc on p->tokens"); */
-
-/*   int size = 1; */
-/*   token_t *t = lexer_collect_next(lexer); */
-/*   p->tokens[size - 1] = t; */
-
-/*   while (true) { */
-/*     t = lexer_collect_next(lexer); */
-/*     size++; */
-/*     p->tokens = realloc(p->tokens, size * sizeof(token_t *)); */
-/*     p->tokens[size - 1] = t; */
-/*     if (t == NULL) */
-/*       break; */
-/*   } */
-/*   p->size = size; */
-/*   return p; */
-/* } */
 
 void parser_move(parser_t *parser) {
   if (parser->i != parser->size - 1)
