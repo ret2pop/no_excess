@@ -94,7 +94,7 @@ ast_t *eval_symbol(visitor_t *v, ast_t *e) {
     hash_table_add(v->eval_table, e->string_value, eval);
     return eval;
   } else {
-    /* printf("symbol error\n"); */
+    printf("symbol error\n");
     eval_error(v, e);
     return NULL;
   }

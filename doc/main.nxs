@@ -1,4 +1,5 @@
 (include "fib.nxs")
+(include "../stdlib/math.nxs")
 
 (bind factorial (lambda (n)
 	(if (= n 0) 1 (* n (factorial (- n 1))))))
@@ -6,4 +7,5 @@
 (print (fib 7))
 (print (+ (factorial 5) 10))
 
+(exp 3)
 (print (quote (+ (3 2) 4)))

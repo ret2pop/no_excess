@@ -26,7 +26,7 @@ ast_t *init_ast_int(int value) {
   return a;
 }
 
-ast_t *init_ast_float(double value) {
+ast_t *init_ast_float(long double value) {
   ast_t *a = init_ast(AST_FLOAT);
   a->float_value = value;
   return a;

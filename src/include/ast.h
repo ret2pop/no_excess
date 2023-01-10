@@ -29,7 +29,7 @@ typedef struct AST_STRUCT {
 
   char *string_value; /* Also is symbol value */
   int int_value;
-  double float_value;
+  long double float_value;
   bool bool_value;
 } ast_t;
 
@@ -39,7 +39,7 @@ ast_t *init_ast_string(char *value);
 
 ast_t *init_ast_int(int value);
 
-ast_t *init_ast_float(double value);
+ast_t *init_ast_float(long double value);
 
 ast_t *init_ast_pair(ast_t *car, ast_t *cdr);
 

@@ -13,7 +13,7 @@ void print_bool(ast_t *b) {
     printf("F");
 }
 
-void print_float(ast_t *f) { printf("%f", f->float_value); }
+void print_float(ast_t *f) { printf("%Lf", f->float_value); }
 
 void print_symbol(ast_t *s) { printf(":%s", s->string_value); }
 

@@ -86,7 +86,7 @@ ast_t *parse_int(parser_t *parser) {
 }
 
 ast_t *parse_float(parser_t *parser) {
-  double ret = atof(parser->tokens[parser->i]->value);
+  long double ret = atof(parser->tokens[parser->i]->value);
   parser_move(parser);
   return init_ast_float(ret);
 }
