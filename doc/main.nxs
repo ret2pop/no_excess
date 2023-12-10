@@ -1,8 +1,18 @@
 (include "fib.nxs")
 (include "../stdlib/math.nxs")
 
-(print (fib 7))
-(print (+ (factorial 5) 10))
+(print (fib 8))
+(print (factorial 5))
+(print (+(factorial 4) 8))
 
-(exp 3)
-(print (quote (+ (3 2) 4)))
+(bind x (lambda (y) (if (<= y 0) y (x (print (- y 1))))))
+
+(x 5)
+
+(print (exp (/ 1.0 2.0)))
+(print (sin 1.0))
+(print (cos 1.0))
+(print (tan 1.0))
+(print (sinh 1.0))
+(print (sin pi))
+(print (ln (exp 1.0)))

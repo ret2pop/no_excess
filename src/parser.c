@@ -140,6 +140,9 @@ void parse_bind(parser_t *parser) {
     parser_error(parser);
   token_t *t = parser->tokens[parser->i];
   char *name = t->value;
+  if (hash_table_get(parser->symbol_table, name) != NULL) {
+    parser_error(parser);
+  }
   parser_move(parser);
   ast_t *expr = parse_expr(parser); /* unevaluated expr will be evaluated when
                                        hash table transfers to visitor JIT */

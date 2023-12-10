@@ -1,7 +1,11 @@
+;; constants
+(bind pi 3.1415926535)
+
 ;; some bootstrapping needed in order to obtain more complicated functions;
 ;; the power series requires a factorial and integer power function
+;; TODO: make it work for negative numbers
 (bind powi (lambda (x y)
-	(if (= y 1)
+	(if (<= y 1)
 	x
 	(* x (powi x (- y 1)))
 	)
@@ -10,7 +14,7 @@
 (bind inv (lambda (x) (/ 1.0 x)))
 
 (bind factorial (lambda (n)
-        (if (= n 0) 1 (* n (factorial (- n 1))))))
+        (if (<= n 0) 1 (* n (factorial (- n 1))))))
 
 ;; complicated functions
 (bind expr (lambda (x y)
@@ -20,15 +24,74 @@
 	)
 ))
 
-(bind exp (lambda (x)
-	(expr x 13)
-))
+(bind sinr (lambda (x y)
+	(if (<= y 0)
+	x
+	(+
+	(* (powi (- 0 1) y)
+	(/ (powi x (+ (* y 2) 1))
+	(factorial (+ (* y 2) 1)))
+	)
+(sinr x (- y 1))
+	))))
 
-(bind sin (lambda (x) x))
+(bind cosr (lambda (x y)
+	(if (<= y 0)
+	x
+	(+
+	(* (powi (- 0 1) y)
+	(/ (powi x (* y 2))
+	(factorial (* y 2)))
+	)
+(cosr x (- y 1))
+	))))
 
-(bind cos (lambda (x) x))
+;; TODO: actually complete this
+(bind lnr (lambda (x y)
+	(if (<= y 0)
+	x
+	(+
+	(* (powi (- 0 1) (+ y 1))
+	(/ (powi (- x 1) y)
+	y)
+	)
+(lnr x (- y 1))
+	))))
+
+(bind sqrtr (lambda (x y) 5)
+
+;; TODO: inverse of trig functions
+
+;; composites of complicated functions
+
+(bind exp (lambda (x) (expr x 13)))
+
+(bind ln (lambda (x) (lnr x 13)))
+
+(bind sin (lambda (x) (sinr x 6)))
+
+(bind cos (lambda (x) (cosr x 6)))
 
 (bind tan (lambda (x) (/ (sin x) (cos x))))
 
-(print (exp 1.0))
-;(print (ln (exp 1)))
+(bind csc (lambda (x) (inv (sin x))))
+
+(bind sec (lamdba (x) (inv (cos x))))
+
+(bind cot (lanbda (x) (inv (tan x))))
+
+(bind sinh (lambda (x) (/ (- (exp x) (exp (- 0 x))) 2.0)))
+
+(bind cosh (lambda (x) (/ (+ (exp x) (exp (- 0 x))) 2.0)))
+
+(bind tanh (lambda (x) (/ (sinh x) (cosh x))))
+
+(bind sech (lambda (x) (inv (cosh x))))
+
+(bind csch (lambda (x) (inv (sinh x))))
+
+(bind coth (lambda (x) (inv (tanh x))))
+
+(bind sqrt (lambda (x) (sqrtr x 10)))
+
+(bind pow (lambda (x y) (exp (* y (ln x)))))

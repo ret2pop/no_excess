@@ -134,6 +134,7 @@ int main(int argc, char **argv) {
   } else if (strcmp(argv[1], "-r") == 0 || strcmp(argv[1], "--repl") == 0) {
     printf("Welcome to the NoExcess REPL.\n");
     while (true) {
+      /* TODO: Finish REPL */
     }
   }
 
@@ -165,7 +166,6 @@ int main(int argc, char **argv) {
     parser_t *parser = init_parser(lexer);
     visitor_t *visitor = init_visitor(parser);
     ast_t *root = eval(visitor);
-    /* print_root(root); */
     ast_free(root);
     ast_free(visitor->root);
     visitor_free(visitor);
